@@ -3,6 +3,7 @@ local plyModuleName = {}			--The local name of the module (to be used in here on
 playerModule = plyModuleName	--The actual name of the module
 
 local animModule = require("LuaLib.animationModule")
+local helpModule = require("LuaLib.helperModule")
 
 plyModuleName.Player = {}
 
@@ -69,32 +70,57 @@ function plyModuleName.Player:new(name)
 	player.state = "idle"
 	player.facingDirection = "left"
 	player.attacking = false
+	player.charging = false
 	player.sprinting = false
 
 	function player.update(dt)
 
 		--Inputs
-		if not love.keyboard.isDown('s') and not love.keyboard.isDown('w') then
-			if love.keyboard.isDown('d') then
-				player.facingDirection = "right"
-				player.state = "walk"
-				player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
-			elseif love.keyboard.isDown('a') then
-				player.facingDirection = "left"
-				player.state = "walk"
-				player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
-			elseif not love.keyboard.isDown('a') and not love.keyboard.isDown('d') then
-				player.state = "idle"
+		if love.keyboard.isDown('e') and not player.attacking and not player.charging then
+			player.charging = true
+		end
+
+		if player.attacking or player.charging then
+			local checkTime = helpModule.Helper.variableDelayChange(0.2)
+			if player.charging then
+				if checkTime then
+					player.attacking = true
+					player.charging = false
+				end
+			elseif player.attacking then
+				if checkTime then
+					player.attacking = false
+					player.charging = false
+				end
 			end
 		end
 
-		if love.keyboard.isDown('s') then
+		if not love.keyboard.isDown('s') and not love.keyboard.isDown('w') then
+			if love.keyboard.isDown('d') then
+				player.facingDirection = "right"
+				if not player.attacking or not player.charging then
+					player.state = "walk"
+					player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
+				else
+					player.state = "idle"
+				end
+			elseif love.keyboard.isDown('a') then
+				player.facingDirection = "left"
+				if not player.attacking or not player.charging then
+					player.state = "walk"
+					player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
+				else
+					player.state = "idle"
+				end
+			elseif not love.keyboard.isDown('a') and not love.keyboard.isDown('d') then
+				player.state = "idle"
+			end
+		elseif love.keyboard.isDown('s') and not love.keyboard.isDown('w') then
 			player.state = "crouch"
-		end
-
-		if love.keyboard.isDown('w') then
-			player.facingDirection = "up"
-			player.state = "crouch"
+		elseif not love.keyboard.isDown('s') and love.keyboard.isDown('w') then
+			if player.Velocity.Y == 0 then
+				player.Velocity.Y = player.jumpHeight
+			end
 		end
 
 		if player.facingDirection == "right" then
@@ -104,6 +130,14 @@ function plyModuleName.Player:new(name)
 				else
 					player.currentImg = player.playerImages.playerRight.LowStab
 				end
+			else
+				if player.charging then
+					player.currentImg = player.playerImages.playerRight.Charge
+				elseif player.attacking then
+					player.currentImg = player.playerImages.playerRight.Stab
+				else
+					player.currentImg = player.playerImages.playerRight.Idle
+				end
 			end
 		elseif player.facingDirection == "left" then
 			if player.state == "crouch" then
@@ -112,12 +146,14 @@ function plyModuleName.Player:new(name)
 				else
 					player.currentImg = player.playerImages.playerLeft.LowStab
 				end
-			end
-		end
-
-		if love.keyboard.isDown('q') then
-			if player.Velocity.Y == 0  then
-				player.Velocity.Y = player.jumpHeight
+			else
+				if player.charging then
+					player.currentImg = player.playerImages.playerLeft.Charge
+				elseif player.attacking then
+					player.currentImg = player.playerImages.playerLeft.Stab
+				else
+					player.currentImg = player.playerImages.playerLeft.Idle
+				end
 			end
 		end
 
