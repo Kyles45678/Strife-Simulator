@@ -52,7 +52,6 @@ function plyModuleName.Player:new(name)
 		};
 	}
 	
-
 	player.currentImg = player.playerImages.playerLeft.Idle
 
 	player.damage = 1
