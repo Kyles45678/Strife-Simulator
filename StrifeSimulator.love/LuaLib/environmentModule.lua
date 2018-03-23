@@ -9,7 +9,7 @@ function envirModuleName.FlatPlatform:new(name, fill)
 
 	object.Name = name
 	object.Fill = fill
-	object.CanCollide = "true"
+	object.CanCollide = true
 	object.ZIndex = 1
 
 	object.Position = {

@@ -22,4 +22,8 @@ helpModuleName.Helper.variableDelayChange = function(x)
 	--love.graphics.print(tostring(love.timer.getFPS()))
 end
 
+function helperModule.load()
+	love.window.setFullScreen(true, "desktop")
+end
+
 return helperModule
