@@ -6,7 +6,6 @@ local playerModule = require("LuaLib.playerModule")
 local map1Module = require("Maps.map1")
 
 local platform
-local map1
 
 local player1 
 

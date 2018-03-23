@@ -23,7 +23,7 @@ helpModuleName.Helper.variableDelayChange = function(x)
 end
 
 function helperModule.load()
-	love.window.setFullScreen(true, "desktop")
+	love.window.setFullscreen(true, "desktop")
 end
 
 return helperModule
