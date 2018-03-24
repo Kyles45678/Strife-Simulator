@@ -5,15 +5,23 @@ playerModule = plyModuleName	--The actual name of the module
 local animModule = require("LuaLib.animationModule")
 local helpModule = require("LuaLib.helperModule")
 local environmentModule = require("LuaLib.environmentModule")
+local map1Mod = require('Maps.map1')
+local map2Mod = require('Maps.map2')
 
 plyModuleName.Player = {}
 
-function plyModuleName.Player:new(name)	
+function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey)	
 	local player = {}
 
 	--Constants
 	player.Name = name
 	player.CanCollide = true
+
+	player.collisionHitbox = environmentModule.FlatPlatform:new("Part", "line")
+	player.collisionHitbox.Size.X = 32  
+	player.collisionHitbox.Size.Y = 64  
+	player.collisionHitbox.Position.X = 0                             
+	player.collisionHitbox.Position.Y = 0
 
 	--Variables
 	player.Position = {
@@ -69,8 +77,8 @@ function plyModuleName.Player:new(name)
 
 	player.friction = 3
 	player.ground = player.Position.Y     -- This makes the character land on the plaform.
-	player.jumpHeight = -300   
-	player.gravity = -800       
+	player.jumpHeight = -350   
+	player.gravity = -1000       
 
 	player.state = "idle"
 	player.facingDirection = "left"
@@ -87,21 +95,25 @@ function plyModuleName.Player:new(name)
 
 		if not player.attacking and not player.charging then
 			if player.grounded then
-				if love.keyboard.isDown('e') then
-					player.attacking = false
-					player.charging = true
-
-				elseif love.keyboard.isDown('w') then
+				if love.keyboard.isDown(attackKey) then
+					if player.state ~= "crouch" then
+						player.attacking = false
+						player.charging = true
+					else
+						player.attacking = true
+						player.charging = false
+					end
+				elseif love.keyboard.isDown(upKey) then
 					player.state = "jump"
 					player.Velocity.Y = player.jumpHeight
-				elseif love.keyboard.isDown('s') then
+				elseif love.keyboard.isDown(downKey) then
 					player.state = "crouch"
 
-				elseif love.keyboard.isDown('d') then
+				elseif love.keyboard.isDown(rightKey) then
 					player.state = "walk"
 					player.facingDirection = "right"
 					player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
-				elseif love.keyboard.isDown('a') then
+				elseif love.keyboard.isDown(leftKey) then
 					player.state = "walk"
 					player.facingDirection = "left"
 					player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
@@ -109,11 +121,11 @@ function plyModuleName.Player:new(name)
 					player.state = "idle"
 				end
 			else
-				if love.keyboard.isDown('e') then
+				if love.keyboard.isDown(attackKey) then
 					player.attacking = true
 					player.charging = false
 
-				elseif love.keyboard.isDown('s') then
+				elseif love.keyboard.isDown(downKey) then
 					player.attacking = true
 					player.charging = false
 					player.facingDirection = "down"
@@ -122,9 +134,7 @@ function plyModuleName.Player:new(name)
 			end
 		end
 
-
 		if player.attacking or player.charging then
-
 			if player.grounded then
 				if player.state ~= "crouch" then 
 					local checkTime = helpModule.Helper.variableDelayChange(0.2)
@@ -134,6 +144,14 @@ function plyModuleName.Player:new(name)
 							player.charging = false
 						end
 					elseif player.attacking then
+						if checkTime then
+							player.attacking = false
+							player.charging = false
+						end
+					end
+				else
+					local checkTime = helpModule.Helper.variableDelayChange(0.2)
+					if player.attacking or player.charging then
 						if checkTime then
 							player.attacking = false
 							player.charging = false
@@ -161,6 +179,12 @@ function plyModuleName.Player:new(name)
 			player.Velocity.Y = 0       
 	    	player.Position.Y = player.ground    
 		end
+
+		player.collisionHitbox.Position.X = player.Position.X + 16                       
+		player.collisionHitbox.Position.Y = player.Position.Y - 64
+
+		envirModuleName.CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+
 
 		--Change Images
 
@@ -236,6 +260,7 @@ function plyModuleName.Player:new(name)
 	end
 
 	function player.display()
+		player.collisionHitbox.display()
 		love.graphics.print(tostring(player.attacking) .. " - " .. tostring(player.charging))
 
 		love.graphics.setColor(255, 0, 0)
