@@ -10,7 +10,7 @@ local map2Mod = require('Maps.map2')
 
 plyModuleName.Player = {}
 
-function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey)	
+function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey, startX, startY, playerIndex)	
 	local player = {}
 
 	--Constants
@@ -25,8 +25,10 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	--Variables
 	player.Position = {
-		X = love.graphics.getWidth() / 2;
-		Y = love.graphics.getHeight() * (3/4);
+		X = startX
+		Y = startY
+		-- X = love.graphics.getWidth() / 2;
+		-- Y = love.graphics.getHeight() * (3/4);
 	}
 
 	player.Velocity = {
@@ -137,7 +139,12 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.attacking or player.charging then
 			if player.grounded then
 				if player.state ~= "crouch" then 
-					local checkTime = helpModule.Helper.variableDelayChange(0.2)
+					local checkTime 
+					if playerIndex == 1 then
+						checkTime = helpModule.Helper.variableDelayChange(0.2)
+					else
+						checkTime = helpModule.Helper.variableDelayChange1(0.2)
+					end
 					if player.charging then
 						if checkTime then
 							player.attacking = true
@@ -150,7 +157,12 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 						end
 					end
 				else
-					local checkTime = helpModule.Helper.variableDelayChange(0.2)
+					local checkTime 
+					if playerIndex == 1 then
+						checkTime = helpModule.Helper.variableDelayChange(0.2)
+					else
+						checkTime = helpModule.Helper.variableDelayChange1(0.2)
+					end
 					if player.attacking or player.charging then
 						if checkTime then
 							player.attacking = false
@@ -183,7 +195,24 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		player.collisionHitbox.Position.X = player.Position.X + 16                       
 		player.collisionHitbox.Position.Y = player.Position.Y - 64
 
-		envirModuleName.CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+		local t1 = map1Mod.getPlatforms()
+		local t2 = map2Mod.getPlatforms()
+		local allPlats = {}
+
+		for i = 1, #t1 do
+			table.insert(allPlats, t1[i])
+		end
+		for i = 1, #t2 do
+			table.insert(allPlats, t2[i])
+		end
+
+		for i = 1, #allPlats do
+			local v = allPlats[i]
+
+			local check = envirModuleName.CheckCollision(player.collisionHitbox.Position.X, player.collisionHitbox.Position.Y, player.collisionHitbox.Size.X, player.collisionHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
+			love.graphics.print(check)
+		end
+		
 
 
 		--Change Images
@@ -261,7 +290,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	function player.display()
 		player.collisionHitbox.display()
-		love.graphics.print(tostring(player.attacking) .. " - " .. tostring(player.charging))
 
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
