@@ -25,8 +25,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	--Variables
 	player.Position = {
-		X = startX
-		Y = startY
+		X = startX;
+		Y = startY;
 		-- X = love.graphics.getWidth() / 2;
 		-- Y = love.graphics.getHeight() * (3/4);
 	}
