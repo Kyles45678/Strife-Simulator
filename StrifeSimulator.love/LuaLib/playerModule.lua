@@ -209,8 +209,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 
-			local check = envirModuleName.CheckCollision(player.collisionHitbox.Position.X, player.collisionHitbox.Position.Y, player.collisionHitbox.Size.X, player.collisionHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-			love.graphics.print(check)
+			local check = environmentModule.CheckCollision(player.collisionHitbox.Position.X, player.collisionHitbox.Position.Y, player.collisionHitbox.Size.X, player.collisionHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
+			love.graphics.print(tostring(check))
 		end
 		
 
