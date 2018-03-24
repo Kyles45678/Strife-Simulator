@@ -79,7 +79,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	player.friction = 3
 	player.ground = player.Position.Y     -- This makes the character land on the plaform.
-	player.jumpHeight = -350   
+	player.baseGround = player.Position.Y
+	player.jumpHeight = -450   
 	player.gravity = -1000       
 
 	player.state = "idle"
@@ -187,11 +188,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.Velocity.Y = player.Velocity.Y - player.gravity * dt 
 		end
 
-		if player.Position.Y > player.ground then    
-			player.Velocity.Y = 0       
-	    	player.Position.Y = player.ground    
-		end
-
 		player.collisionHitbox.Position.X = player.Position.X + 16                       
 		player.collisionHitbox.Position.Y = player.Position.Y - 64
 
@@ -210,10 +206,18 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			local v = allPlats[i]
 
 			local check = environmentModule.CheckCollision(player.collisionHitbox.Position.X, player.collisionHitbox.Position.Y, player.collisionHitbox.Size.X, player.collisionHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-			love.graphics.print(tostring(check))
+			
+			if check then
+				player.ground = v.Position.Y
+			else
+				player.ground = player.baseGround
+			end
 		end
-		
 
+		if player.Position.Y > player.ground then    
+			player.Velocity.Y = 0       
+	    	player.Position.Y = player.ground    
+		end
 
 		--Change Images
 
