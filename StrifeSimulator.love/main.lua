@@ -3,7 +3,7 @@
 
 local environmentModule = require("LuaLib.environmentModule") --C:\Users\Kathy Senebouttarath\Desktop\Love 2D\StrifeSimulator.love\
 local playerModule = require("LuaLib.playerModule")
-local map1Module = require("Maps.map1")
+local gameModule = require("LuaLib.gameModule")
 
 local platform
 
@@ -16,19 +16,25 @@ function love.load()
 	platform.Position.X = 0                             
 	platform.Position.Y = love.graphics.getHeight() * (3/4)   
 
-	map1.load()
+	gameModule.load()
 
-	helperModule.load()
+	--helperModule.load()
 
 	player1 = playerModule.Player:new("Andrew")   
 end
 
 function love.update(dt)
 	player1.update(dt)
+
+	if(love.keyboard.isDown('escape')) then
+		love.event.quit()
+	end
 end
 
 function love.draw()
 	platform.display()
+
+	map2.display()
 
 	player1.display()
 end
