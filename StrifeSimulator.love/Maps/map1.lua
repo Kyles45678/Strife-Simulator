@@ -9,6 +9,10 @@ local platform1
 local platform2
 local platform3
 
+function map1Module.getPlatforms()
+	return {platform1, platform2, platform3}
+end
+
 function map1Module.load()
 	--set background properties
 	background = environmentModule.FlatPlatform:new("Background", "fill")

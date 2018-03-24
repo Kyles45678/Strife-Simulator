@@ -26,7 +26,9 @@ end
 function love.update(dt)
 	player1.update(dt)
 
-	if(love.keyboard.isDown('escape')) then
+	gameModule.update(dt)
+
+	if(love.keyboard.isDown(constantsModule.exitKey)) then
 		love.event.quit()
 	end
 end
@@ -34,7 +36,7 @@ end
 function love.draw()
 	platform.display()
 
-	map2.display()
+	gameModule.display()
 
 	player1.display()
 end
