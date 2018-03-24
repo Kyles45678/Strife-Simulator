@@ -6,6 +6,7 @@ constantsModule.player1up = 'w'
 constantsModule.player1down = 's'
 constantsModule.player1left = 'a'
 constantsModule.player1right = 'd'
+constantsModule.player1attack = 'e'
 
 --player 2 controls
 constantsModule.player1up = 'up'

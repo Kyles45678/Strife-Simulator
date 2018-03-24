@@ -4,10 +4,12 @@
 local environmentModule = require("LuaLib.environmentModule") --C:\Users\Kathy Senebouttarath\Desktop\Love 2D\StrifeSimulator.love\
 local playerModule = require("LuaLib.playerModule")
 local gameModule = require("LuaLib.gameModule")
+local constantsModule = require("LuaLib.constants")
 
 local platform
 
 local player1 
+local player2
 
 function love.load()
 	platform = environmentModule.FlatPlatform:new("Part", "fill")
@@ -20,11 +22,13 @@ function love.load()
 
 	--helperModule.load()
 
-	player1 = playerModule.Player:new("Andrew")   
+	player1 = playerModule.Player:new("Andrew", constantsModule.player1up, constantsModule.player1down, constantsModule.player1left, constantsModule.player1right, constantsModule.player1attack, love.graphics.getWidth() / 2, love.graphics.getHeight() * (3/4), 1) 
+	player2 = playerModule.Player:new("Biggie Smalls", constantsModule.player2up, constantsModule.player2down, constantsModule.player2left, constantsModule.player2right, constantsModule.player2attack, love.graphics.getWidth() / 2, love.graphics.getHeight() * (3/4), 2)  
 end
 
 function love.update(dt)
 	player1.update(dt)
+	player2.update(dt)
 
 	gameModule.update(dt)
 
@@ -39,6 +43,7 @@ function love.draw()
 	gameModule.display()
 
 	player1.display()
+	player2.display()
 end
 
 
