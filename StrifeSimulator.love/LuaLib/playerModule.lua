@@ -4,6 +4,7 @@ playerModule = plyModuleName	--The actual name of the module
 
 local animModule = require("LuaLib.animationModule")
 local helpModule = require("LuaLib.helperModule")
+local environmentModule = require("LuaLib.environmentModule")
 
 plyModuleName.Player = {}
 
@@ -12,7 +13,7 @@ function plyModuleName.Player:new(name)
 
 	--Constants
 	player.Name = name
-	player.CanCollide = "true"
+	player.CanCollide = true
 
 	--Variables
 	player.Position = {
@@ -21,6 +22,11 @@ function plyModuleName.Player:new(name)
 	}
 
 	player.Velocity = {
+		X = 0;
+		Y = 0;
+	}
+
+	player.Acceleration = {
 		X = 0;
 		Y = 0;
 	}
@@ -64,141 +70,178 @@ function plyModuleName.Player:new(name)
 	player.friction = 3
 	player.ground = player.Position.Y     -- This makes the character land on the plaform.
 	player.jumpHeight = -300   
-	player.gravity = -500       
+	player.gravity = -800       
 
 	player.state = "idle"
 	player.facingDirection = "left"
+
 	player.attacking = false
 	player.charging = false
 	player.sprinting = false
+	player.grounded = true
 
 	function player.update(dt)
 
-		--Inputs
-		if love.keyboard.isDown('e') and not player.attacking and not player.charging then
-			player.charging = true
-		end
+		local dt1 = math.min(dt, 0.07)
+		local frame = dt1 * 30
 
-		if player.attacking or player.charging then
-			local checkTime = helpModule.Helper.variableDelayChange(0.2)
-			if player.charging then
-				if checkTime then
-					player.attacking = true
-					player.charging = false
-				end
-			elseif player.attacking then
-				if checkTime then
+		if not player.attacking and not player.charging then
+			if player.grounded then
+				if love.keyboard.isDown('e') then
 					player.attacking = false
-					player.charging = false
-				end
-			end
-		end
+					player.charging = true
 
-		if not love.keyboard.isDown('s') and not love.keyboard.isDown('w') then
-			if love.keyboard.isDown('d') then
-				player.facingDirection = "right"
-				if not player.attacking or not player.charging then
+				elseif love.keyboard.isDown('w') then
+					player.state = "jump"
+					player.Velocity.Y = player.jumpHeight
+				elseif love.keyboard.isDown('s') then
+					player.state = "crouch"
+
+				elseif love.keyboard.isDown('d') then
 					player.state = "walk"
+					player.facingDirection = "right"
 					player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
-				else
-					player.state = "idle"
-				end
-			elseif love.keyboard.isDown('a') then
-				player.facingDirection = "left"
-				if not player.attacking or not player.charging then
+				elseif love.keyboard.isDown('a') then
 					player.state = "walk"
+					player.facingDirection = "left"
 					player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
 				else
 					player.state = "idle"
 				end
-			elseif not love.keyboard.isDown('a') and not love.keyboard.isDown('d') then
-				player.state = "idle"
-			end
-		elseif love.keyboard.isDown('s') and not love.keyboard.isDown('w') then
-			player.state = "crouch"
-		elseif not love.keyboard.isDown('s') and love.keyboard.isDown('w') then
-			if player.Velocity.Y == 0 then
-				player.Velocity.Y = player.jumpHeight
+			else
+				if love.keyboard.isDown('e') then
+					player.attacking = true
+					player.charging = false
+
+				elseif love.keyboard.isDown('s') then
+					player.attacking = true
+					player.charging = false
+					player.facingDirection = "down"
+
+				end
 			end
 		end
 
-		if player.facingDirection == "right" then
-			if player.state == "crouch" then
-				if not player.attacking then
-					player.currentImg = player.playerImages.playerRight.Low
-				else
-					player.currentImg = player.playerImages.playerRight.LowStab
-				end
-			else
-				if player.charging then
-					player.currentImg = player.playerImages.playerRight.Charge
-				elseif player.attacking then
-					player.currentImg = player.playerImages.playerRight.Stab
-				else
-					player.currentImg = player.playerImages.playerRight.Idle
-				end
-			end
-		elseif player.facingDirection == "left" then
-			if player.state == "crouch" then
-				if not player.attacking then
-					player.currentImg = player.playerImages.playerLeft.Low
-				else
-					player.currentImg = player.playerImages.playerLeft.LowStab
-				end
-			else
-				if player.charging then
-					player.currentImg = player.playerImages.playerLeft.Charge
-				elseif player.attacking then
-					player.currentImg = player.playerImages.playerLeft.Stab
-				else
-					player.currentImg = player.playerImages.playerLeft.Idle
+
+		if player.attacking or player.charging then
+
+			if player.grounded then
+				if player.state ~= "crouch" then 
+					local checkTime = helpModule.Helper.variableDelayChange(0.2)
+					if player.charging then
+						if checkTime then
+							player.attacking = true
+							player.charging = false
+						end
+					elseif player.attacking then
+						if checkTime then
+							player.attacking = false
+							player.charging = false
+						end
+					end
 				end
 			end
 		end
 
 		--Physics
-
-		local dt1 = math.min(dt, 0.07)
-
-		frame = dt1 * 30
 		player.Position.X = player.Position.X + player.Velocity.X * frame
-		player.Velocity.X = player.Velocity.X * (1 - math.sin(dt * player.friction, 1))
+		if player.grounded then
+			player.Velocity.X = player.Velocity.X * (1 - math.sin(dt * player.friction, 1)) 
+		end
 
-		if player.Position.X >= (love.graphics.getWidth() - player.currentImg:getWidth()) then
-			player.Position.X = love.graphics.getWidth() - player.currentImg:getWidth()
-			player.Velocity.X = 0
-		elseif player.Position.X <= 0 then 
-			player.Position.X = 0
-			player.Velocity.X = 0
-		end 
-
-		if player.Velocity.Y ~= 0 then                                   
+		if player.Velocity.Y == 0 then
+			player.grounded = true
+		elseif player.Velocity.Y ~= 0 then 
+			player.grounded = false                                  
 			player.Position.Y = player.Position.Y + player.Velocity.Y * dt                
 			player.Velocity.Y = player.Velocity.Y - player.gravity * dt 
 		end
-        if player.Position.Y > player.ground then    
+
+		if player.Position.Y > player.ground then    
 			player.Velocity.Y = 0       
 	    	player.Position.Y = player.ground    
 		end
 
-		--Anims
+		--Change Images
 
-		if player.state == "walk" then
-			if player.facingDirection == "left" then
-				player.currentImg = player.playerImages.playerLeft.Idle
-				player.playerImages.playerLeft.Walk.update(dt)
-			elseif player.facingDirection == "right" then
-				player.currentImg = player.playerImages.playerRight.Idle
-				player.playerImages.playerRight.Walk.update(dt)
+		local function changeAttackAnim(direction)
+			if direction == "right" then
+				if player.charging then
+					player.currentImg = player.playerImages.playerRight.Charge
+				elseif player.attacking then
+					player.currentImg = player.playerImages.playerRight.Stab
+				end
+			elseif direction == "left" then
+				if player.charging then
+					player.currentImg = player.playerImages.playerLeft.Charge
+				elseif player.attacking then
+					player.currentImg = player.playerImages.playerLeft.Stab
+				end
 			end
 		end
+
+		if player.state == "crouch" or player.state == "jump" then
+			if player.facingDirection == "right" then
+				player.currentImg = player.playerImages.playerRight.Low
+
+				if player.grounded then
+					if player.attacking then
+						player.currentImg = player.playerImages.playerRight.LowStab
+					end
+				else
+					if player.attacking then
+						player.currentImg = player.playerImages.playerRight.StabDown
+					end
+				end
+				
+			elseif player.facingDirection == "left" then
+				player.currentImg = player.playerImages.playerLeft.Low
+				
+				if player.grounded then
+					if player.attacking then
+						player.currentImg = player.playerImages.playerLeft.LowStab
+					end
+				else
+					if player.attacking then
+						player.currentImg = player.playerImages.playerLeft.StabDown
+					end
+				end
+			end
+		elseif player.state == "walk" then
+			if player.facingDirection == "right" then
+				if not player.attacking then
+					player.currentImg = player.playerImages.playerRight.Idle
+					player.playerImages.playerRight.Walk.update(dt)
+				end
+
+				changeAttackAnim(player.facingDirection)
+			elseif player.facingDirection == "left" then
+				if not player.attacking then
+					player.currentImg = player.playerImages.playerLeft.Idle
+					player.playerImages.playerLeft.Walk.update(dt)
+				end
+
+				changeAttackAnim(player.facingDirection)
+			end
+		elseif player.state == "idle" then
+			if player.facingDirection == "right" then
+				player.currentImg = player.playerImages.playerRight.Idle
+				changeAttackAnim(player.facingDirection)
+			elseif player.facingDirection == "left" then
+				player.currentImg = player.playerImages.playerLeft.Idle
+				changeAttackAnim(player.facingDirection)
+			end
+		end
+		
 	end
 
 	function player.display()
+		love.graphics.print(tostring(player.attacking) .. " - " .. tostring(player.charging))
+
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 
-		if player.state == "walk" then
+		if player.state == "walk" and not player.attacking and not player.charging then
 			if player.facingDirection == "left" then
 				player.playerImages.playerLeft.Walk.draw(player.Position.X, player.Position.Y)
 			elseif player.facingDirection == "right" then
