@@ -8,6 +8,10 @@ local background
 local platform1
 local platform2
 local platform3
+--local leftWall
+--local rightWall
+
+local timer = 0
 
 function map2Module.getPlatforms()
 	return {platform1, platform2, platform3}
@@ -67,10 +71,24 @@ function map2Module.load()
 end
 
 function map2Module.update(dt)
+	timer = timer + 1
 
+	love.graphics.print(tostring(platform2.Position.Y))
+
+	if timer / 60 == 0 then
+		if platform2.Position.Y > 100 then
+			platform2.Position.Y = platform2.Position.Y - 1
+			timer = 0
+		elseif platform2.Position.Y < 400 then
+			platform2.Position.Y = platform2.Position.Y + 1
+			timer = 0
+		end
+	end
 end
 
 function map2Module.display()
+	love.graphics.print(tostring(platform2.Position.Y))
+
 	--draw background
 	love.graphics.setColor(background.Color.Red, background.Color.Green, background.Color.Blue)
 	love.graphics.rectangle(background.Fill, background.Position.X, background.Position.Y, background.Size.X, background.Size.Y)

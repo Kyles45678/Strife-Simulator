@@ -12,6 +12,8 @@ function gameModule.load()
 end
 
 function gameModule.update(dt)
+	map1.update(dt)
+	map2.update(dt)
 	if love.keyboard.isDown('kp1') then
 		screen = 2
 	end
