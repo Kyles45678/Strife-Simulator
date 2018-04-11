@@ -7,6 +7,7 @@ local helpModule = require("LuaLib.helperModule")
 local environmentModule = require("LuaLib.environmentModule")
 local map1Mod = require('Maps.map1')
 local map2Mod = require('Maps.map2')
+local gameModule = require('LuaLib.gameModule')
 
 plyModuleName.Player = {}
 
@@ -81,7 +82,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.ground = player.Position.Y     -- This makes the character land on the plaform.
 	player.baseGround = player.Position.Y
 	player.jumpHeight = -450   
-	player.gravity = -1000       
+	player.gravity = gameModule.gravity       
 
 	player.state = "idle"
 	player.facingDirection = "left"
@@ -187,6 +188,23 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		player.Position.Y = player.Position.Y + player.Velocity.Y * dt                
 		player.Velocity.Y = player.Velocity.Y - player.gravity * dt 
 
+		if player.Velocity.Y >= gameModule.maxFallVelocity then
+			player.Velocity.Y = gameModule.maxFallVelocity
+		end
+
+		if player.Position.Y > player.ground then    
+			player.Velocity.Y = 0       
+	    	player.Position.Y = player.ground    
+		end
+
+		if player.Velocity.Y == 0 then
+			player.grounded = true
+		elseif player.Velocity.Y ~= 0 then 
+			player.grounded = false                                  
+			
+		end
+
+		--Collision Detection
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
 		allPlats = {}
@@ -211,25 +229,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			end
 		end
 
-		if player.Position.Y > player.ground then    
-			player.Velocity.Y = 0       
-	    	player.Position.Y = player.ground    
-		end
-
-		--[[
-		if player.Velocity.Y == 0 then
-			player.grounded = true
-		elseif player.Velocity.Y ~= 0 then 
-			player.grounded = false                                  
-			
-		end
-		]]
-
+		--Hitboxes
 		player.floorHitbox.Position.X = player.Position.X + 16                       
 		player.floorHitbox.Position.Y = player.Position.Y 
 
 		--Change Images
-
 		local function changeAttackAnim(direction)
 			if direction == "right" then
 				if player.charging then
@@ -303,7 +307,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	function player.display()
 		player.floorHitbox.display()
-		
+
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 

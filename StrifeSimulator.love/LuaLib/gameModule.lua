@@ -5,8 +5,10 @@ local map1Module = require("Maps.map1")
 local map2Module = require("Maps.map2")
 
 local screen = 1
+local TestImage = love.graphics.newImage('assets/backgrounds/brian.jpg')
 
-TestImage = love.graphics.newImage('assets/backgrounds/brian.jpg')
+gameModuleName.gravity = -1000
+gameModuleName.maxFallVelocity = 500
 
 function gameModule.load()
 	map1.load()
