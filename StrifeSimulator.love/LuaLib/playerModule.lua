@@ -17,11 +17,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.Name = name
 	player.CanCollide = true
 
-	player.collisionHitbox = environmentModule.FlatPlatform:new("Part", "line")
-	player.collisionHitbox.Size.X = 32  
-	player.collisionHitbox.Size.Y = 64  
-	player.collisionHitbox.Position.X = 0                             
-	player.collisionHitbox.Position.Y = 0
+	player.floorHitbox = environmentModule.FlatPlatform:new("Part", "line")
+	player.floorHitbox.Size.X = 32  
+	player.floorHitbox.Size.Y = 1  
+	player.floorHitbox.Position.X = 0                             
+	player.floorHitbox.Position.Y = 0
 
 	--Variables
 	player.Position = {
@@ -90,6 +90,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.charging = false
 	player.sprinting = false
 	player.grounded = true
+
+	local allPlats = nil
 
 	function player.update(dt)
 
@@ -175,25 +177,19 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		end
 
 		--Physics
+		--X axis
 		player.Position.X = player.Position.X + player.Velocity.X * frame
 		if player.grounded then
 			player.Velocity.X = player.Velocity.X * (1 - math.sin(dt * player.friction, 1)) 
 		end
 
-		if player.Velocity.Y == 0 then
-			player.grounded = true
-		elseif player.Velocity.Y ~= 0 then 
-			player.grounded = false                                  
-			player.Position.Y = player.Position.Y + player.Velocity.Y * dt                
-			player.Velocity.Y = player.Velocity.Y - player.gravity * dt 
-		end
-
-		player.collisionHitbox.Position.X = player.Position.X + 16                       
-		player.collisionHitbox.Position.Y = player.Position.Y - 64
+		--Y axis
+		player.Position.Y = player.Position.Y + player.Velocity.Y * dt                
+		player.Velocity.Y = player.Velocity.Y - player.gravity * dt 
 
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
-		local allPlats = {}
+		allPlats = {}
 
 		for i = 1, #t1 do
 			table.insert(allPlats, t1[i])
@@ -205,10 +201,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 
-			local check = environmentModule.CheckCollision(player.collisionHitbox.Position.X, player.collisionHitbox.Position.Y, player.collisionHitbox.Size.X, player.collisionHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
+			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 			
 			if check then
 				player.ground = v.Position.Y
+				break
 			else
 				player.ground = player.baseGround
 			end
@@ -218,6 +215,18 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.Velocity.Y = 0       
 	    	player.Position.Y = player.ground    
 		end
+
+		--[[
+		if player.Velocity.Y == 0 then
+			player.grounded = true
+		elseif player.Velocity.Y ~= 0 then 
+			player.grounded = false                                  
+			
+		end
+		]]
+
+		player.floorHitbox.Position.X = player.Position.X + 16                       
+		player.floorHitbox.Position.Y = player.Position.Y 
 
 		--Change Images
 
@@ -293,8 +302,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	end
 
 	function player.display()
-		player.collisionHitbox.display()
-
+		player.floorHitbox.display()
+		
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 

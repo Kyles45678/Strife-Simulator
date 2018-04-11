@@ -11,13 +11,14 @@ function envirModuleName.CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
          y2 < y1+h1
 end
 
-function envirModuleName.FlatPlatform:new(name, fill)	
+function envirModuleName.FlatPlatform:new(name, fill, redCol, greenCol, blueCol)	
 	local object = {}
 
 	object.Name = name
 	object.Fill = fill
 	object.CanCollide = true
 	object.ZIndex = 1
+	object.Visibile = false
 
 	object.Position = {
 		X = 0;
@@ -30,14 +31,15 @@ function envirModuleName.FlatPlatform:new(name, fill)
 	}
 
 	object.Color = {
-		Red = 255;
-		Green = 255;
-		Blue = 255;
+		Red = redCol or 255;
+		Green = greenCol or 255;
+		Blue = blueCol or 255;
 	}
 
 	function object.display()
 		love.graphics.setColor(object.Color.Red, object.Color.Green, object.Color.Blue)
 		love.graphics.rectangle(object.Fill, object.Position.X, object.Position.Y, object.Size.X, object.Size.Y)
+		object.Visibile = true
 	end
 
 	return object

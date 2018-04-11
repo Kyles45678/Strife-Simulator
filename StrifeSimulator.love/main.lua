@@ -12,7 +12,7 @@ local player1
 local player2
 
 function love.load()
-	platform = environmentModule.FlatPlatform:new("Part", "fill")
+	platform = environmentModule.FlatPlatform:new("Part", "fill", 255, 255, 255)
 	platform.Size.X = love.graphics.getWidth()   
 	platform.Size.Y = love.graphics.getHeight() / 4
 	platform.Position.X = 0                             
