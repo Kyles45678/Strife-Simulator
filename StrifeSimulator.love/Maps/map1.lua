@@ -8,6 +8,8 @@ local background
 local platform1
 local platform2
 local platform3
+--local leftWall
+--local rightWall
 
 function map1Module.getPlatforms()
 	return {platform1, platform2, platform3}
