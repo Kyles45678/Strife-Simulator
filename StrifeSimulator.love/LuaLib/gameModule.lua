@@ -6,6 +6,8 @@ local map2Module = require("Maps.map2")
 
 local screen = 1
 
+TestImage = love.graphics.newImage('assets/backgrounds/brian.jpg')
+
 function gameModule.load()
 	map1.load()
 	map2.load()
@@ -25,7 +27,9 @@ end
 
 function gameModule.display()
 	if screen == 1 then
-		love.graphics.print("WE OUT HERE")
+		love.graphics.draw(TestImage, 0, 0)
+		love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
+		love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
 	end
 
 	if screen == 2 then
