@@ -65,6 +65,10 @@ function gameModule.update(dt)
 	if love.keyboard.isDown('kp9') then
 		screen = 1
 	end
+
+	if love.keyboard.isDown('kp8') then
+		screen = 0
+	end
 end
 
 function gameModule.display()
