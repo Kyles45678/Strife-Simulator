@@ -24,6 +24,24 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.floorHitbox.Position.X = 0                             
 	player.floorHitbox.Position.Y = 0
 
+	player.hurtBox = environmentModule.FlatPlatform:new("Part", "line")
+	player.hurtBox.Size.X = 32  
+	player.hurtBox.Size.Y = 64  
+	player.hurtBox.Position.X = 0                             
+	player.hurtBox.Position.Y = 0
+
+	player.attackBox = environmentModule.FlatPlatform:new("Part", "line")
+	player.attackBox.Size.X = 20  
+	player.attackBox.Size.Y = 14  
+	player.attackBox.Position.X = 0                             
+	player.attackBox.Position.Y = 0
+
+	player.gaurdBox = environmentModule.FlatPlatform:new("Part", "line")
+	player.gaurdBox.Size.X = 3  
+	player.gaurdBox.Size.Y = 14 
+	player.gaurdBox.Position.X = 0                             
+	player.gaurdBox.Position.Y = 0
+
 	--Variables
 	player.Position = {
 		X = startX;
@@ -221,12 +239,14 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 			
-			if player.Velocity.Y >= 0 then
-				if check then
-					player.ground = v.Position.Y
-					break
-				else
-					player.ground = player.baseGround
+			if v.CanCollide then
+				if player.Velocity.Y >= 0 then
+					if check then
+						player.ground = v.Position.Y
+						break
+					else
+						player.ground = player.baseGround
+					end
 				end
 			end
 		end
@@ -234,6 +254,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		--Hitboxes
 		player.floorHitbox.Position.X = player.Position.X + 16                       
 		player.floorHitbox.Position.Y = player.Position.Y 
+
+		player.hurtBox.Position.X = player.Position.X + 16  
+		player.hurtBox.Position.Y = player.Position.Y - 64
 
 		--Change Images
 		local function changeAttackAnim(direction)
@@ -309,6 +332,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	function player.display()
 		player.floorHitbox.display()
+		player.hurtBox.display()
+		player.attackBox.display()
+		player.gaurdBox.display()
 
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
