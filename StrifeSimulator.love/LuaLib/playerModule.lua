@@ -17,6 +17,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	--Constants
 	player.Name = name
 	player.CanCollide = true
+	player.loaded = true
 
 	player.floorHitbox = environmentModule.FlatPlatform:new("Part", "line")
 	player.floorHitbox.Size.X = 32  
@@ -46,8 +47,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.Position = {
 		X = startX;
 		Y = startY;
-		-- X = love.graphics.getWidth() / 2;
-		-- Y = love.graphics.getHeight() * (3/4);
 	}
 
 	player.Velocity = {
@@ -113,6 +112,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	local allPlats = nil
 
 	function player.update(dt)
+
+		if not player.loaded then return end
 
 		local dt1 = math.min(dt, 0.07)
 		local frame = dt1 * 30
@@ -330,27 +331,40 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				changeAttackAnim(player.facingDirection)
 			end
 		end
-		
+	end
+
+	function player.unload()
+		player.loaded = false
+	end
+
+	function player.load()
+		player.loaded = true
+		player.Position.X = startX
+		player.Position.Y = startY
+		player.Velocity.X = 0
+		player.Velocity.Y = 0
 	end
 
 	function player.display()
-		player.floorHitbox.display()
-		player.hurtBox.display()
-		player.attackBox.display()
-		player.gaurdBox.display()
+		if player.loaded then
+			player.floorHitbox.display()
+			player.hurtBox.display()
+			player.attackBox.display()
+			player.gaurdBox.display()
 
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
+			love.graphics.setColor(255, 0, 0)
+			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 
-		if player.state == "walk" and not player.attacking and not player.charging then
-			if player.facingDirection == "left" then
-				player.playerImages.playerLeft.Walk.draw(player.Position.X, player.Position.Y)
-			elseif player.facingDirection == "right" then
-				player.playerImages.playerRight.Walk.draw(player.Position.X, player.Position.Y)
+			if player.state == "walk" and not player.attacking and not player.charging then
+				if player.facingDirection == "left" then
+					player.playerImages.playerLeft.Walk.draw(player.Position.X, player.Position.Y)
+				elseif player.facingDirection == "right" then
+					player.playerImages.playerRight.Walk.draw(player.Position.X, player.Position.Y)
+				end
+			else
+				love.graphics.setColor(255, 255, 255)
+				love.graphics.draw(player.currentImg, player.Position.X, player.Position.Y, 0, 1, 1, 0, 64)
 			end
-		else
-			love.graphics.setColor(255, 255, 255)
-			love.graphics.draw(player.currentImg, player.Position.X, player.Position.Y, 0, 1, 1, 0, 64)
 		end
 	end
 
