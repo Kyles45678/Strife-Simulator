@@ -3,9 +3,10 @@ gameModule = gameModuleName
 
 local map1Module = require("Maps.map1")
 local map2Module = require("Maps.map2")
+local constantsModule = require("LuaLib.constants")
 
-local screen = 1
-local TestImage = love.graphics.newImage('assets/backgrounds/brian.jpg')
+local screen = constantsModule.titleScreen
+local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
 
 gameModuleName.gravity = -1000
 gameModuleName.maxFallVelocity = 500
@@ -15,35 +16,75 @@ function gameModule.load()
 	map2.load()
 end
 
+function gameModule.unload()
+
+end
+
 function gameModule.update(dt)
 	map1.update(dt)
 	map2.update(dt)
-	if love.keyboard.isDown('kp1') then
+
+	--make sure screens are in range
+	if screen < constantsModule.titleScreen then
+		screen = constantsModule.titleScreen
+	end
+
+	if screen > constantsModule.map2 then
+		screen = constantsModule.map2
+	end
+
+	--control which screen is being displayed
+
+	--shift to go to instructions
+	if screen == 1 and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) then
 		screen = 2
 	end
 
-	if love.keyboard.isDown('kp2') then
+	--enter to go to map selection
+	if screen == 1 and love.keyboard.isDown('return') then
 		screen = 3
+	end
+
+	--backspace to go back to title screen
+	if (screen == 2 or screen == 3) and love.keyboard.isDown('backspace') then
+		screen = 1
+	end
+
+	--kp1 to go to map 1
+	if screen == 3 and love.keyboard.isDown('kp1') then
+		screen = 4
+	end
+
+	--kp2 to go to map 2
+	if screen == 3 and love.keyboard.isDown('kp2') then
+		screen = 5
+	end
+
+	--for testing, delete later
+	if love.keyboard.isDown('kp9') then
+		screen = 1
 	end
 end
 
 function gameModule.display()
 	if screen == 1 then
-		love.graphics.draw(TestImage, 0, 0)
-		love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
-		love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
-	end
-
-	if screen == 2 then
+		love.graphics.draw(BryGuy, 0, 0)
+		love.graphics.print("Title Screen", 10, 10)
+		--love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
+		--love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
+	elseif screen == 2 then
+		love.graphics.draw(BryGuy, 0, 0)
+		love.graphics.print("Instructions", 10, 10)
+	elseif screen == 3 then
+		love.graphics.draw(BryGuy, 0, 0)
+		love.graphics.print("Map Selection", 10, 10)
+	elseif screen == 4 then
 		map1.display()
-	end
-
-	if screen == 3 then
+	elseif screen == 5 then
 		map2.display()
-	end
-
-	if screen < 1 or screen > 3 then
-		love.graphics.print("OOF")
+	else
+		love.graphics.draw(BryGuy, 0, 0)
+		love.graphics.print("OOF", 10, 10)
 	end
 end
 

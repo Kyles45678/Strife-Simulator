@@ -17,4 +17,11 @@ constantsModule.player2attack = 'kp0'
 
 constantsModule.exitKey = 'escape'
 
+--screen constants
+constantsModule.titleScreen = 1
+constantsModule.instructions = 2
+constantsModule.mapSelection = 3
+constantsModule.map1 = 4
+constantsModule.map2 = 5
+
 return constantsModule
