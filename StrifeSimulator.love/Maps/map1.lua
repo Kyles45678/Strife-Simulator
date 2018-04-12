@@ -18,7 +18,7 @@ end
 function map1Module.load()
 	--set background properties
 	background = environmentModule.FlatPlatform:new("Background", "fill", 125, 200, 232)
-	background.canCollide = false
+	background.CanCollide = false
 	background.Size.X = love.graphics.getWidth()
 	background.Size.Y = love.graphics.getHeight()
 	background.Position.X = 0
@@ -26,6 +26,7 @@ function map1Module.load()
 
 	--set ground properties
 	ground = environmentModule.FlatPlatform:new("Ground", "fill", 0, 175, 0)
+	ground.CanCollide = true
 	ground.Size.X = love.graphics.getWidth()
 	ground.Size.Y = love.graphics.getHeight() / 4
 	ground.Position.X = 0
@@ -33,6 +34,7 @@ function map1Module.load()
 
 	--set platform1 properties
 	platform1 = environmentModule.FlatPlatform:new("Platform1", "fill", 60, 60, 60)
+	platform1.CanCollide = true
 	platform1.Size.X = 200
 	platform1.Size.Y = 15
 	platform1.Position.X = 100
@@ -40,6 +42,7 @@ function map1Module.load()
 
 	--set platform2 properties
 	platform2 = environmentModule.FlatPlatform:new("Platform2", "fill", 60, 60, 60)
+	platform2.CanCollide = true
 	platform2.Size.X = 200
 	platform2.Size.Y = 15
 	platform2.Position.X = 500
@@ -47,10 +50,18 @@ function map1Module.load()
 
 	--set platform3 properties
 	platform3 = environmentModule.FlatPlatform:new("Platform3", "fill", 60, 60, 60)
+	platform3.CanCollide = true
 	platform3.Size.X = 200
 	platform3.Size.Y = 15
 	platform3.Position.X = 300
 	platform3.Position.Y = 280
+end
+
+function map1Module.unload()
+	ground.CanCollide = false
+	platform1.CanCollide = false
+	platform2.CanCollide = false
+	platform3.CanCollide = false
 end
 
 function map1Module.update(dt)

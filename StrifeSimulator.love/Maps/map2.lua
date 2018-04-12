@@ -20,7 +20,7 @@ end
 function map2Module.load()
 	--set background properties
 	background = environmentModule.FlatPlatform:new("Background", "fill")
-	background.canCollide = false
+	background.CanCollide = false
 	background.Size.X = love.graphics.getWidth()
 	background.Size.Y = love.graphics.getHeight()
 	background.Position.X = 0
@@ -31,6 +31,7 @@ function map2Module.load()
 
 	--set ground properties
 	ground = environmentModule.FlatPlatform:new("Ground", "fill")
+	ground.CanCollide = true
 	ground.Size.X = love.graphics.getWidth()
 	ground.Size.Y = love.graphics.getHeight() / 4
 	ground.Position.X = 0
@@ -39,9 +40,9 @@ function map2Module.load()
 	ground.Color.Green = 60
 	ground.Color.Blue = 35
 
-		--set left wall properties
+	--set left wall properties
 	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill")
-	leftWall.canCollide = false
+	leftWall.CanCollide = false
 	leftWall.Size.X = 5
 	leftWall.Size.Y = 600
 	leftWall.Position.X = -5
@@ -52,7 +53,7 @@ function map2Module.load()
 
 	--set right wall properties
 	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill")
-	rightWall.canCollide = false
+	rightWall.CanCollide = false
 	rightWall.Size.X = 5
 	rightWall.Size.Y = 600
 	rightWall.Position.X = 800
@@ -63,6 +64,7 @@ function map2Module.load()
 
 	--set platform1 properties
 	platform1 = environmentModule.FlatPlatform:new("Platform1", "fill")
+	platform1.CanCollide = true
 	platform1.Size.X = 200
 	platform1.Size.Y = 15
 	platform1.Position.X = 100
@@ -73,6 +75,7 @@ function map2Module.load()
 
 	--set platform2 properties
 	platform2 = environmentModule.FlatPlatform:new("Platform2", "fill")
+	platform2.CanCollide = true
 	platform2.Size.X = 200
 	platform2.Size.Y = 15
 	platform2.Position.X = 500
@@ -83,6 +86,7 @@ function map2Module.load()
 
 	--set platform3 properties
 	platform3 = environmentModule.FlatPlatform:new("Platform3", "fill")
+	platform3.CanCollide = true
 	platform3.Size.X = 200
 	platform3.Size.Y = 15
 	platform3.Position.X = 300
@@ -90,6 +94,13 @@ function map2Module.load()
 	platform3.Color.Red = 0
 	platform3.Color.Green = 0
 	platform3.Color.Blue = 0
+end
+
+function map2Module.unload()
+	ground.CanCollide = false
+	platform1.CanCollide = false
+	platform2.CanCollide = false
+	platform3.CanCollide = false
 end
 
 function map2Module.update(dt)

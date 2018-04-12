@@ -9,7 +9,7 @@ local screen = constantsModule.titleScreen
 local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
 
 gameModuleName.gravity = -1000
-gameModuleName.maxFallVelocity = 500
+gameModuleName.maxFallVelocity = 400
 
 function gameModule.load()
 	map1.load()
@@ -17,7 +17,8 @@ function gameModule.load()
 end
 
 function gameModule.unload()
-
+	map1.unload()
+	map2.unload()
 end
 
 function gameModule.update(dt)
@@ -70,21 +71,29 @@ function gameModule.display()
 	if screen == 1 then
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("Title Screen", 10, 10)
+		gameModule.unload()
 		--love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
 		--love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
 	elseif screen == 2 then
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("Instructions", 10, 10)
+		gameModule.unload()
 	elseif screen == 3 then
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("Map Selection", 10, 10)
+		gameModule.unload()
 	elseif screen == 4 then
+		map1.load()
 		map1.display()
+		map2.unload()
 	elseif screen == 5 then
+		map2.load()
 		map2.display()
+		map1.unload()
 	else
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("OOF", 10, 10)
+		gameModule.unload()
 	end
 end
 
