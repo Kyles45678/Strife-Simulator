@@ -119,7 +119,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local frame = dt1 * 30
 
 		if not player.attacking and not player.charging then
+
 			if player.grounded then
+				
 				if love.keyboard.isDown(attackKey) then
 					if player.state ~= "crouch" then
 						player.attacking = false
