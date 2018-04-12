@@ -239,16 +239,19 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 			
-			if v.CanCollide then
-				if player.Velocity.Y >= 0 then
-					if check then
+			if player.Velocity.Y >= 0 then
+				if check then
+					if v.CanCollide then
 						player.ground = v.Position.Y
 						break
 					else
 						player.ground = player.baseGround
 					end
+				else
+					player.ground = player.baseGround
 				end
 			end
+		
 		end
 
 		--Hitboxes
