@@ -12,9 +12,6 @@ local MapSelection = love.graphics.newImage('assets/backgrounds/brian.jpg')
 local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
 local cursor = love.graphics.newImage('assets/cursors/crosshair.png')
 
---local InstructionsRect = environmentModule.FlatPlatform:new("InstructionsRect", "line", 255, 255, 255)
---local MapSelectRect = environmentModule.FlatPlatform:new("MapSelectRect", "line", 255, 255, 255)
-
 gameModuleName.gravity = -1000
 gameModuleName.maxFallVelocity = 400
 
@@ -25,12 +22,50 @@ function gameModule.load()
 	map1.load()
 	map2.load()
 
+	InstructionsRect = environmentModule.FlatPlatform:new("InstructionsRect", "line", 255, 255, 255)
+	InstructionsRect.Size.X = 298
+	InstructionsRect.Size.Y = 50
+	InstructionsRect.Position.X = 20
+	InstructionsRect.Position.Y = 396
 
+	MapSelectRect = environmentModule.FlatPlatform:new("MapSelectRect", "line", 255, 255, 255)
+	MapSelectRect.Size.X = 225
+	MapSelectRect.Size.Y = 50
+	MapSelectRect.Position.X = 500
+	MapSelectRect.Position.Y = 396
 end
 
 function gameModule.unload()
 	map1.unload()
 	map2.unload()
+end
+
+--check for intersection, returns true if the two objects are intersecting, false if not
+function gameModule.intersects(object)
+	local check = false
+	local mouseX = love.mouse.getX() - cursor:getWidth() / 2
+	local mouseY = love.mouse.getY() - cursor:getHeight() / 2
+	local objectLeftX = object.Position.X
+	local objectRightX = object.Position.X + object.Size.X
+	local objectTopY = object.Position.Y
+	local objectBotY = object.Position.Y + object.Size.Y
+
+	if(mouseX >= objectLeftX and mouseX <= objectRightX and mouseY >= objectTopY and mouseY <= objectBotY) then
+		check = true
+	end
+
+	return check
+end
+
+--check for mouse click on an object, return true if mouse clicked on that object
+function gameModule.clicked(object)
+	local check = false
+
+	if(love.mouse.isDown(1) and gameModule.intersects(object)) then
+		check = true
+	end
+
+	return check
 end
 
 function gameModule.update(dt)
@@ -48,13 +83,13 @@ function gameModule.update(dt)
 
 	--control which screen is being displayed
 
-	--shift to go to instructions
-	if screen == 1 and (love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift')) then
+	--click on "instructions" to go to instructions
+	if screen == 1 and gameModule.clicked(InstructionsRect) then
 		screen = 2
 	end
 
-	--enter to go to map selection
-	if screen == 1 and love.keyboard.isDown('return') then
+	--click on "play game" to go to map selection
+	if screen == 1 and gameModule.clicked(MapSelectRect) then
 		screen = 3
 	end
 
@@ -83,8 +118,8 @@ function gameModule.display()
 	--control which screen is currently being displayed
 	if screen == constantsModule.titleScreen then
 		love.graphics.draw(TitleScreen, 0, 0)
-		love.graphics.rectangle('line', 20, 396, 298, 50)
-		love.graphics.rectangle('line', 500, 396, 225, 50)
+		InstructionsRect.display()
+		MapSelectRect.display()
 		love.graphics.print("Title Screen", 10, 10)
 		gameModule.unload()
 		--love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
