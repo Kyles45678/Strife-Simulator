@@ -31,15 +31,15 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.hurtBox.Position.X = 0                             
 	player.hurtBox.Position.Y = 0
 
-	player.attackBox = environmentModule.FlatPlatform:new("Part", "line")
+	player.attackBox = environmentModule.FlatPlatform:new("Part", "line", 255, 255, 0)
 	player.attackBox.Size.X = 20  
 	player.attackBox.Size.Y = 14  
 	player.attackBox.Position.X = 0                             
 	player.attackBox.Position.Y = 0
 
-	player.gaurdBox = environmentModule.FlatPlatform:new("Part", "line")
-	player.gaurdBox.Size.X = 3  
-	player.gaurdBox.Size.Y = 14 
+	player.gaurdBox = environmentModule.FlatPlatform:new("Part", "line", 0, 0, 255)
+	player.gaurdBox.Size.X = 6  
+	player.gaurdBox.Size.Y = 32 
 	player.gaurdBox.Position.X = 0                             
 	player.gaurdBox.Position.Y = 0
 
@@ -91,6 +91,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.damage = 1
 	player.health = 8
 	player.lives = 3
+	player.personalTimer = {count = 0}
 
 	player.walkSpeed = 18
 	player.sprintSpeed = player.walkSpeed + (player.walkSpeed/2)
@@ -106,11 +107,30 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	player.attacking = false
 	player.charging = false
+	player.canAttack = true
 	player.sprinting = false
 	player.grounded = true
 
 	local allPlats = nil
 
+	--Change Images
+	local function changeAttackAnim(direction)
+		if direction == "right" then
+			if player.charging then
+				player.currentImg = player.playerImages.playerRight.Charge
+			elseif player.attacking then
+				player.currentImg = player.playerImages.playerRight.Stab
+			end
+		elseif direction == "left" then
+			if player.charging then
+				player.currentImg = player.playerImages.playerLeft.Charge
+			elseif player.attacking then
+				player.currentImg = player.playerImages.playerLeft.Stab
+			end
+		end
+	end
+
+	--Main Loop
 	function player.update(dt)
 
 		if not player.loaded then return end
@@ -149,13 +169,21 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				end
 			end
 
-			if love.keyboard.isDown(attackKey) then
-				if player.grounded then
-					if player.state == "crouch" or player.state == "jump" then
+			if not player.canAttack and not player.charging and not love.keyboard.isDown(attackKey) then
+				checkTime = helpModule.Helper.variableDelayChange(0.05, player.personalTimer)
+				if checkTime then
+					player.canAttack = true
+				end
+			end
+
+			if love.keyboard.isDown(attackKey) and player.canAttack then
+				player.canAttack = false
+				if player.state == "crouch" or player.state == "jump" then
+					player.attacking = true
+					player.charging = false
+				elseif player.state == "idle" or player.state == "walk" then
+					if player.grounded then
 						player.attacking = true
-						player.charging = false
-					elseif player.state == "idle" or player.state == "walk" then
-						player.attacking = false
 						player.charging = true
 					end
 				end
@@ -166,7 +194,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					player.state = "idle"
 				end
 			end
-
 
 			--Change Idle Images
 			if player.state == "jump" or player.state == "crouch" then
@@ -190,47 +217,44 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					player.currentImg = player.playerImages.playerLeft.Idle
 				end
 			end
-		end
+		else --If player.attacking then
 
-		--[[
-		if player.attacking or player.charging then
-			if player.grounded then
-				if player.state ~= "crouch" then 
-					local checkTime 
-					if playerIndex == 1 then
-						checkTime = helpModule.Helper.variableDelayChange(0.2)
-					else
-						checkTime = helpModule.Helper.variableDelayChange1(0.2)
-					end
-					if player.charging then
-						if checkTime then
-							player.attacking = true
-							player.charging = false
-						end
-					elseif player.attacking then
-						if checkTime then
-							player.attacking = false
-							player.charging = false
-						end
-					end
-				else
-					local checkTime 
-					if playerIndex == 1 then
-						checkTime = helpModule.Helper.variableDelayChange(0.2)
-					else
-						checkTime = helpModule.Helper.variableDelayChange1(0.2)
-					end
-					if player.attacking or player.charging then
-						if checkTime then
-							player.attacking = false
-							player.charging = false
-						end
-					end
+			--Update timers
+			local checkTime 
+			if player.charging then
+				checkTime = helpModule.Helper.variableDelayChange(0.2, player.personalTimer)
+				if checkTime then
+					player.attacking = true
+					player.charging = false
+				end
+			else
+				checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
+				if checkTime then
+					player.attacking = false
+					player.charging = false
 				end
 			end
+
+			--Update Images and Hitboxes
+			if player.state == "crouch" or player.state == "jump" then
+				if player.facingDirection == "right" then
+					player.currentImg = player.playerImages.playerRight.LowStab
+
+					if not player.grounded then
+						player.currentImg = player.playerImages.playerRight.StabDown
+					end
+				elseif player.facingDirection == "left" then
+					player.currentImg = player.playerImages.playerLeft.LowStab
+
+					if not player.grounded then
+						player.currentImg = player.playerImages.playerLeft.StabDown
+					end
+				end
+			elseif player.state == "walk" or player.state == "idle" then
+				changeAttackAnim(player.facingDirection)
+			end
 		end
-		
-		]]
+
 		--Physics
 		--X axis
 		player.Position.X = player.Position.X + player.Velocity.X * frame
@@ -251,9 +275,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	    	player.Position.Y = player.ground    
 		end
 
-		if player.Velocity.Y == 0 then
+		if player.Position.Y >= player.ground then
 			player.grounded = true
-		elseif player.Velocity.Y ~= 0 then 
+		else
 			player.grounded = false                                  
 		end
 
@@ -296,80 +320,51 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		player.hurtBox.Position.X = player.Position.X + 16  
 		player.hurtBox.Position.Y = player.Position.Y - 64
 
-		--Change Images
-		local function changeAttackAnim(direction)
-			if direction == "right" then
-				if player.charging then
-					player.currentImg = player.playerImages.playerRight.Charge
-				elseif player.attacking then
-					player.currentImg = player.playerImages.playerRight.Stab
+		--Gaurding
+		if not player.attacking and not player.charging then
+			if player.state == "crouch" or player.state == "jump" then
+				player.gaurdBox.Position.Y = player.Position.Y - 32
+				if player.facingDirection == "left" then
+					player.gaurdBox.Position.X = player.Position.X + 16
+				elseif player.facingDirection == "right" then
+					player.gaurdBox.Position.X = player.Position.X + 42
 				end
-			elseif direction == "left" then
-				if player.charging then
-					player.currentImg = player.playerImages.playerLeft.Charge
-				elseif player.attacking then
-					player.currentImg = player.playerImages.playerLeft.Stab
+			elseif player.state == "walk" or player.state == "idle" then
+				player.gaurdBox.Position.Y = player.Position.Y - 64
+				if player.facingDirection == "left" then
+					player.gaurdBox.Position.X = player.Position.X + 16
+				elseif player.facingDirection == "right" then
+					player.gaurdBox.Position.X = player.Position.X + 42
 				end
 			end
+		else
+			player.gaurdBox.Position.X = player.Position.X
+			player.gaurdBox.Position.Y = player.Position.Y + 10000 * playerIndex
 		end
-
-		--[[
-		if player.state == "crouch" or player.state == "jump" then
-			if player.facingDirection == "right" then
-				player.currentImg = player.playerImages.playerRight.Low
-
-				if player.grounded then
-					if player.attacking then
-						player.currentImg = player.playerImages.playerRight.LowStab
-					end
-				else
-					if player.attacking then
-						player.currentImg = player.playerImages.playerRight.StabDown
-					end
+		--Attacking
+		if player.attacking and not player.charging then
+			if player.state == "idle" or player.state == "walk" then
+				player.attackBox.Position.Y = player.Position.Y - 48
+				if player.facingDirection == "right" then
+					player.attackBox.Position.X = player.Position.X + 44
+				elseif player.facingDirection == "left" then
+					player.attackBox.Position.X = player.Position.X
 				end
-				
-			elseif player.facingDirection == "left" then
-				player.currentImg = player.playerImages.playerLeft.Low
-				
-				if player.grounded then
-					if player.attacking then
-						player.currentImg = player.playerImages.playerLeft.LowStab
-					end
-				else
-					if player.attacking then
-						player.currentImg = player.playerImages.playerLeft.StabDown
-					end
+			elseif player.state == "crouch" then
+				player.attackBox.Position.Y = player.Position.Y - 28
+				if player.facingDirection == "right" then
+					player.attackBox.Position.X = player.Position.X + 44
+				elseif player.facingDirection == "left" then
+					player.attackBox.Position.X = player.Position.X
 				end
+			elseif player.state == "jump" then
+				player.attackBox.Position.Y = player.Position.Y - 4
+				player.attackBox.Position.X = player.Position.X + 22
 			end
-		elseif player.state == "walk" then
-			if player.facingDirection == "right" then
-				if not player.attacking then
-					player.currentImg = player.playerImages.playerRight.Idle
-					player.playerImages.playerRight.Walk.update(dt)
-				end
-
-				changeAttackAnim(player.facingDirection)
-			elseif player.facingDirection == "left" then
-				if not player.attacking then
-					player.currentImg = player.playerImages.playerLeft.Idle
-					player.playerImages.playerLeft.Walk.update(dt)
-				end
-
-				changeAttackAnim(player.facingDirection)
-			end
-		elseif player.state == "idle" then
-			if player.facingDirection == "right" then
-				player.currentImg = player.playerImages.playerRight.Idle
-				changeAttackAnim(player.facingDirection)
-			elseif player.facingDirection == "left" then
-				player.currentImg = player.playerImages.playerLeft.Idle
-				changeAttackAnim(player.facingDirection)
-			end
+		else
+			player.attackBox.Position.X = player.Position.X
+			player.attackBox.Position.Y = player.Position.Y + 100000 * playerIndex
 		end
-
-		]]
-
-
 	end
 
 	function player.unload()
@@ -388,12 +383,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			player.floorHitbox.display()
 			player.hurtBox.display()
-			player.attackBox.display()
-			player.gaurdBox.display()
 
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
-
 			if player.state == "walk" and not player.attacking and not player.charging then
 				if player.facingDirection == "left" then
 					player.playerImages.playerLeft.Walk.draw(player.Position.X, player.Position.Y)
@@ -404,6 +396,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				love.graphics.setColor(255, 255, 255)
 				love.graphics.draw(player.currentImg, player.Position.X, player.Position.Y, 0, 1, 1, 0, 64)
 			end
+
+			player.gaurdBox.display()
+			player.attackBox.display()
 		end
 	end
 
