@@ -6,14 +6,26 @@ local map2Module = require("Maps.map2")
 local constantsModule = require("LuaLib.constants")
 
 local screen = constantsModule.titleScreen
+local TitleScreen = love.graphics.newImage('assets/backgrounds/titleScreen.png')
+local Instructions = love.graphics.newImage('assets/backgrounds/nutt.jpg')
+local MapSelection = love.graphics.newImage('assets/backgrounds/brian.jpg')
 local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
+local cursor = love.graphics.newImage('assets/cursors/crosshair.png')
+
+--local InstructionsRect = environmentModule.FlatPlatform:new("InstructionsRect", "line", 255, 255, 255)
+--local MapSelectRect = environmentModule.FlatPlatform:new("MapSelectRect", "line", 255, 255, 255)
 
 gameModuleName.gravity = -1000
 gameModuleName.maxFallVelocity = 400
 
+--turn off mouse visibility
+love.mouse.setVisible(false)
+
 function gameModule.load()
 	map1.load()
 	map2.load()
+
+
 end
 
 function gameModule.unload()
@@ -65,32 +77,31 @@ function gameModule.update(dt)
 	if love.keyboard.isDown('kp9') then
 		screen = 1
 	end
-
-	if love.keyboard.isDown('kp8') then
-		screen = 0
-	end
 end
 
 function gameModule.display()
-	if screen == 1 then
-		love.graphics.draw(BryGuy, 0, 0)
+	--control which screen is currently being displayed
+	if screen == constantsModule.titleScreen then
+		love.graphics.draw(TitleScreen, 0, 0)
+		love.graphics.rectangle('line', 20, 396, 298, 50)
+		love.graphics.rectangle('line', 500, 396, 225, 50)
 		love.graphics.print("Title Screen", 10, 10)
 		gameModule.unload()
 		--love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
 		--love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
-	elseif screen == 2 then
-		love.graphics.draw(BryGuy, 0, 0)
+	elseif screen == constantsModule.instructions then
+		love.graphics.draw(Instructions, 0, 0)
 		love.graphics.print("Instructions", 10, 10)
 		gameModule.unload()
-	elseif screen == 3 then
-		love.graphics.draw(BryGuy, 0, 0)
+	elseif screen == constantsModule.mapSelection then
+		love.graphics.draw(MapSelection, 0, 0)
 		love.graphics.print("Map Selection", 10, 10)
 		gameModule.unload()
-	elseif screen == 4 then
+	elseif screen == constantsModule.map1 then
 		map1.load()
 		map1.display()
 		map2.unload()
-	elseif screen == 5 then
+	elseif screen == constantsModule.map2 then
 		map2.load()
 		map2.display()
 		map1.unload()
@@ -98,6 +109,12 @@ function gameModule.display()
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("OOF", 10, 10)
 		gameModule.unload()
+	end
+
+	if screen == 1 or screen == 2 or screen == 3 then
+		--draw cursor to screen
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.draw(cursor, love.mouse.getX() - cursor:getWidth() / 2, love.mouse.getY() - cursor:getHeight() / 2)
 	end
 end
 
