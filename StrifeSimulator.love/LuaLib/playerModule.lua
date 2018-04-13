@@ -118,49 +118,81 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local dt1 = math.min(dt, 0.07)
 		local frame = dt1 * 30
 
-		if not player.attacking and not player.charging then
-
+		if not player.attacking then
+			
 			if player.grounded then
-				
-				if love.keyboard.isDown(attackKey) then
+				if love.keyboard.isDown(rightKey) then
 					if player.state ~= "crouch" then
-						player.attacking = false
-						player.charging = true
-					else
-						player.attacking = true
-						player.charging = false
+						player.state = "walk"
+						player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
 					end
-				elseif love.keyboard.isDown(upKey) then
+					player.facingDirection = "right"
+				elseif love.keyboard.isDown(leftKey) then
+					if player.state ~= "crouch" then
+						player.state = "walk"
+						player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
+					end
+					player.facingDirection = "left"
+				end
+			end
+
+			if love.keyboard.isDown(downKey) then
+				if player.grounded then
+					player.state = "crouch"
+				end
+			end
+
+			if love.keyboard.isDown(upKey) then
+				if player.grounded then
 					player.state = "jump"
 					player.Velocity.Y = player.jumpHeight
-				elseif love.keyboard.isDown(downKey) then
-					player.state = "crouch"
+				end
+			end
 
-				elseif love.keyboard.isDown(rightKey) then
-					player.state = "walk"
-					player.facingDirection = "right"
-					player.Velocity.X = player.Velocity.X + player.walkSpeed * dt
-				elseif love.keyboard.isDown(leftKey) then
-					player.state = "walk"
-					player.facingDirection = "left"
-					player.Velocity.X = player.Velocity.X - player.walkSpeed * dt
-				else
+			if love.keyboard.isDown(attackKey) then
+				if player.grounded then
+					if player.state == "crouch" or player.state == "jump" then
+						player.attacking = true
+						player.charging = false
+					elseif player.state == "idle" or player.state == "walk" then
+						player.attacking = false
+						player.charging = true
+					end
+				end
+			end 
+
+			if not love.keyboard.isDown(leftKey) and not love.keyboard.isDown(rightKey) and not love.keyboard.isDown(upKey) and not love.keyboard.isDown(downKey) and not love.keyboard.isDown(attackKey) then
+				if player.grounded then
 					player.state = "idle"
 				end
-			else
-				if love.keyboard.isDown(attackKey) then
-					player.attacking = true
-					player.charging = false
+			end
 
-				elseif love.keyboard.isDown(downKey) then
-					player.attacking = true
-					player.charging = false
-					player.facingDirection = "down"
 
+			--Change Idle Images
+			if player.state == "jump" or player.state == "crouch" then
+				if player.facingDirection == "right" then
+					player.currentImg = player.playerImages.playerRight.Low
+				elseif player.facingDirection == "left" then
+					player.currentImg = player.playerImages.playerLeft.Low
+				end
+			elseif player.state == "walk" then
+				if player.facingDirection == "right" then
+					player.currentImg = player.playerImages.playerRight.Idle
+					player.playerImages.playerRight.Walk.update(dt)
+				elseif player.facingDirection == "left" then
+					player.currentImg = player.playerImages.playerLeft.Idle
+					player.playerImages.playerLeft.Walk.update(dt)
+				end
+			elseif player.state == "idle" then
+				if player.facingDirection == "right" then
+					player.currentImg = player.playerImages.playerRight.Idle
+				elseif player.facingDirection == "left" then
+					player.currentImg = player.playerImages.playerLeft.Idle
 				end
 			end
 		end
 
+		--[[
 		if player.attacking or player.charging then
 			if player.grounded then
 				if player.state ~= "crouch" then 
@@ -197,7 +229,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				end
 			end
 		end
-
+		
+		]]
 		--Physics
 		--X axis
 		player.Position.X = player.Position.X + player.Velocity.X * frame
@@ -222,7 +255,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.grounded = true
 		elseif player.Velocity.Y ~= 0 then 
 			player.grounded = false                                  
-			
 		end
 
 		--Collision Detection
@@ -281,6 +313,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			end
 		end
 
+		--[[
 		if player.state == "crouch" or player.state == "jump" then
 			if player.facingDirection == "right" then
 				player.currentImg = player.playerImages.playerRight.Low
@@ -333,6 +366,10 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				changeAttackAnim(player.facingDirection)
 			end
 		end
+
+		]]
+
+
 	end
 
 	function player.unload()
