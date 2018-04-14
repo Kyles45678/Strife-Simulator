@@ -7,6 +7,7 @@ local helpModule = require("LuaLib.helperModule")
 local environmentModule = require("LuaLib.environmentModule")
 local map1Mod = require('Maps.map1')
 local map2Mod = require('Maps.map2')
+local map3Mod = require('Maps.map3')
 local gameModule = require('LuaLib.gameModule')
 
 plyModuleName.Player = {}
@@ -287,12 +288,16 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		--Collision Detection
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
+		local t3 = map3Mod.getPlatforms()
 		allPlats = {}
 		for i = 1, #t1 do
 			table.insert(allPlats, t1[i])
 		end
 		for i = 1, #t2 do
 			table.insert(allPlats, t2[i])
+		end
+		for i = 1, #t3 do
+			table.insert(allPlats, t3[i])
 		end
 		for i = 1, #allPlats do
 			local v = allPlats[i]
