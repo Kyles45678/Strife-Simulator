@@ -23,6 +23,7 @@ constantsModule.instructions = 2
 constantsModule.mapSelection = 3
 constantsModule.map1 = 4
 constantsModule.map2 = 5
-constantsModule.bryGuy = 6
+constantsModule.map3 = 6
+constantsModule.bryGuy = 7
 
 return constantsModule
