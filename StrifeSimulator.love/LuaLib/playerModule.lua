@@ -11,6 +11,8 @@ local gameModule = require('LuaLib.gameModule')
 
 plyModuleName.Player = {}
 
+local allPlayers = {}
+
 function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey, startX, startY, playerIndex)	
 	local player = {}
 
@@ -112,6 +114,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.grounded = true
 
 	local allPlats = nil
+	table.insert(allPlayers, playerIndex, player)
 
 	--Change Images
 	local function changeAttackAnim(direction)
@@ -285,19 +288,15 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
 		allPlats = {}
-
 		for i = 1, #t1 do
 			table.insert(allPlats, t1[i])
 		end
 		for i = 1, #t2 do
 			table.insert(allPlats, t2[i])
 		end
-
 		for i = 1, #allPlats do
 			local v = allPlats[i]
-
 			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-			
 			if player.Velocity.Y >= 0 then
 				if check then
 					if v.CanCollide then
@@ -310,7 +309,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					player.ground = player.baseGround
 				end
 			end
-		
 		end
 
 		--Hitboxes
@@ -341,6 +339,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.gaurdBox.Position.X = player.Position.X
 			player.gaurdBox.Position.Y = player.Position.Y + 10000 * playerIndex
 		end
+
 		--Attacking
 		if player.attacking and not player.charging then
 			if player.state == "idle" or player.state == "walk" then
@@ -363,12 +362,67 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			end
 		else
 			player.attackBox.Position.X = player.Position.X
-			player.attackBox.Position.Y = player.Position.Y + 100000 * playerIndex
+			player.attackBox.Position.Y = player.Position.Y + 1000000 * (playerIndex^10)
+		end
+
+		--Hitbox Detections
+		for i = 1, #allPlayers do
+			local enemPly = allPlayers[i]
+
+			local enemGaurdBox = enemPly.gaurdBox
+			local enemAttackBox = enemPly.attackBox
+
+			--Detect if the swords clank
+			--[[
+			if player.attacking and enemPly.attacking then
+				local check = environmentModule.CheckCollision(player.attackBox.Position.X, player.attackBox.Position.Y, player.attackBox.Size.X, player.attackBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
+				if enemPly.loaded then
+					if check then
+						if player.facingDirection == "right" then
+							player.Velocity.X = -10
+						elseif player.facingDirection == "left" then
+							player.Velocity.X = 10
+						end
+						
+					end
+				end
+			end
+			]]
+			--Detect the player's sword on opponent's shield
+			if player.attacking then
+				local check = environmentModule.CheckCollision(player.attackBox.Position.X, player.attackBox.Position.Y, player.attackBox.Size.X, player.attackBox.Size.Y, enemGaurdBox.Position.X, enemGaurdBox.Position.Y, enemGaurdBox.Size.X, enemGaurdBox.Size.Y)
+				if enemPly.loaded then
+					if check then
+						if player.facingDirection == "right" then
+							player.Velocity.X = -8
+						elseif player.facingDirection == "left" then
+							player.Velocity.X = 8
+						end
+						break
+					end
+				end
+			end
+
+			--Detect the enemy's sword on player's shield
+			if enemPly.attacking then
+				local check = environmentModule.CheckCollision(player.gaurdBox.Position.X, player.gaurdBox.Position.Y, player.gaurdBox.Size.X, player.gaurdBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
+				if enemPly.loaded then
+					if check then
+						if player.facingDirection == "right" then
+							player.Velocity.X = -8
+						elseif player.facingDirection == "left" then
+							player.Velocity.X = 8
+						end
+						break
+					end
+				end
+			end
 		end
 	end
 
 	function player.unload()
 		player.loaded = false
+		table.remove(allPlayers, playerIndex)
 	end
 
 	function player.load()
@@ -377,6 +431,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		player.Position.Y = startY
 		player.Velocity.X = 0
 		player.Velocity.Y = 0
+		table.insert(allPlayers, playerIndex, player)
 	end
 
 	function player.display()
@@ -399,6 +454,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 			player.gaurdBox.display()
 			player.attackBox.display()
+
+			love.graphics.print(name, player.Position.X, player.Position.Y - 80)
 		end
 	end
 
