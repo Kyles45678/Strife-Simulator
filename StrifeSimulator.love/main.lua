@@ -27,10 +27,13 @@ function love.load()
 end
 
 function love.update(dt)
-	player1.update(dt)
-	player2.update(dt)
-
 	gameModule.update(dt)
+
+	--only control the players if a map is selected
+	if gameModule.screen == 4 or gameModule.screen == 5 then
+		player1.update(dt)
+		player2.update(dt)
+	end
 
 	if(love.keyboard.isDown(constantsModule.exitKey)) then
 		love.event.quit()
@@ -42,8 +45,11 @@ function love.draw()
 
 	gameModule.display()
 
-	player1.display()
-	player2.display()
+	--only draw the players if a map is selected
+	if gameModule.screen == 4 or gameModule.screen == 5 then
+		player1.display()
+		player2.display()
+	end
 end
 
 
