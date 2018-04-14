@@ -20,8 +20,7 @@ local cursor = love.graphics.newImage('assets/cursors/crosshair.png')
 local screen = constantsModule.titleScreen
 gameModuleName.gravity = -1000
 gameModuleName.maxFallVelocity = 400
-
-test = false
+gameModuleName.pressed = false
 
 --turn off mouse visibility
 love.mouse.setVisible(false)
@@ -105,14 +104,16 @@ end
 --check for mouse click on an object, return true if mouse clicked on that object
 function gameModule.clicked(object)
 	local check = false
-	--local pressed = false
 
-	if(love.mouse.isDown(1) and gameModule.intersects(object)) then
-		check = true
+	if gameModule.intersects(object) then
+		if love.mouse.isDown(1) and gameModuleName.pressed == false then
+			gameModuleName.pressed = true
+			check = false
+		elseif love.mouse.isDown(1) == false and gameModuleName.pressed == true then
+			gameModuleName.pressed = false
+			check = true
+		end
 	end
-
-	--love.graphics.print(tostring(pressed), 50, 50)
-	--love.graphics.print(tostring(check), 50, 70)
 
 	return check
 end
@@ -180,14 +181,12 @@ function gameModule.display()
 		love.graphics.draw(TitleScreen, 0, 0)
 		InstructionsRect.display()
 		MapSelectRect.display()
-		--love.graphics.print("Title Screen", 10, 10)
 		gameModule.unload()
 		--love.graphics.print(tostring(love.graphics.getWidth()), 0, 0)
 		--love.graphics.print(tostring(love.graphics.getHeight()), 0, 20)
 	elseif screen == constantsModule.instructions then
 		love.graphics.draw(Instructions, 0, 0)
 		BackRect.display()
-		--love.graphics.print("Instructions", 10, 10)
 		gameModule.unload()
 	elseif screen == constantsModule.mapSelection then
 		love.graphics.draw(MapSelection, 0, 0)
@@ -195,7 +194,6 @@ function gameModule.display()
 		love.graphics.draw(Map2Icon, 480, 200)
 		love.graphics.draw(Map3Icon, 160, 370)
 		BackRect.display()
-		--love.graphics.print("Map Selection", 10, 10)
 		gameModule.unload()
 	elseif screen == constantsModule.map1 then
 		map1.load()
@@ -226,9 +224,6 @@ function gameModule.display()
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(cursor, love.mouse.getX() - cursor:getWidth() / 2, love.mouse.getY() - cursor:getHeight() / 2)
 	end
-
-	--test = gameModule.clicked(MapSelectRect)
-	--love.graphics.print(tostring(test), 50, 90)
 end
 
 return gameModule
