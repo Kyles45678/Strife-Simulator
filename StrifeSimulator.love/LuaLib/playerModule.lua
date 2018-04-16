@@ -8,6 +8,7 @@ local environmentModule = require("LuaLib.environmentModule")
 local map1Mod = require('Maps.map1')
 local map2Mod = require('Maps.map2')
 local map3Mod = require('Maps.map3')
+local map4Mod = require('Maps.map4')
 local gameModule = require('LuaLib.gameModule')
 
 plyModuleName.Player = {}
@@ -289,6 +290,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
 		local t3 = map3Mod.getPlatforms()
+		local t4 = map4Mod.getPlatforms()
 		allPlats = {}
 		for i = 1, #t1 do
 			table.insert(allPlats, t1[i])
@@ -299,19 +301,38 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #t3 do
 			table.insert(allPlats, t3[i])
 		end
+		for i = 1, #t4 do
+			table.insert(allPlats, t4[i])
+		end
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-			if player.Velocity.Y >= 0 then
-				if check then
-					if v.CanCollide then
-						player.ground = v.Position.Y
-						break
+
+			if v.Type == "Platform" then
+				if player.Velocity.Y >= 0 then
+					if check then
+						if v.CanCollide then
+							player.ground = v.Position.Y
+							break
+						else
+							player.ground = player.baseGround
+						end
 					else
 						player.ground = player.baseGround
 					end
-				else
-					player.ground = player.baseGround
+				end
+			elseif v.Type == "Wall" then
+				if check then
+					if player.Velocity.X < 0 then	--Velocity to the left
+						if player.Velocity.X then
+
+						end
+					else
+
+					end
+					--[[if player.x < (love.graphics.getWidth() - player.img:getWidth()) then
+						player.x = player.x + (player.speed * dt)
+					end]]
 				end
 			end
 		end
