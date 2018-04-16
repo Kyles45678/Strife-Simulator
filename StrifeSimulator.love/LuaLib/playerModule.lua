@@ -34,6 +34,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.hurtBox.Size.Y = 64  
 	player.hurtBox.Position.X = 0                             
 	player.hurtBox.Position.Y = 0
+	player.hurtBox.Type = "Wall"
 
 	player.attackBox = environmentModule.FlatPlatform:new("Part", "line", 255, 255, 0)
 	player.attackBox.Size.X = 20  
@@ -304,6 +305,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #t4 do
 			table.insert(allPlats, t4[i])
 		end
+		for i = 1, #allPlayers do
+			table.insert(allPlats, allPlayers[i].hurtBox)
+		end
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
@@ -324,15 +328,14 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			elseif v.Type == "Wall" then
 				if check then
 					if player.Velocity.X < 0 then	--Velocity to the left
-						if player.Velocity.X then
-
+						if player.Position.X <= (v.Position.X + v.Size.X) then
+							player.Velocity.X = 0
 						end
 					else
-
+						if player.Position.X > (v.Position.X) then
+							player.Velocity.X = 0
+						end
 					end
-					--[[if player.x < (love.graphics.getWidth() - player.img:getWidth()) then
-						player.x = player.x + (player.speed * dt)
-					end]]
 				end
 			end
 		end
