@@ -219,6 +219,7 @@ function gameModule.display()
 		gameModule.unload()
 	end
 
+
 	if screen == 1 or screen == 2 or screen == 3 then
 		--draw cursor to screen
 		love.graphics.setColor(255, 255, 255)

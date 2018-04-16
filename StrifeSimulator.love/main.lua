@@ -6,18 +6,10 @@ local playerModule = require("LuaLib.playerModule")
 local gameModule = require("LuaLib.gameModule")
 local constantsModule = require("LuaLib.constants")
 
-local platform
-
 local player1 
 local player2
 
-function love.load()
-	platform = environmentModule.FlatPlatform:new("Part", "fill", 255, 255, 255)
-	platform.Size.X = love.graphics.getWidth()   
-	platform.Size.Y = love.graphics.getHeight() / 4
-	platform.Position.X = 0                             
-	platform.Position.Y = love.graphics.getHeight() * (3/4)   
-
+function love.load() 
 	gameModule.load()
 
 	--helperModule.load()
@@ -41,8 +33,6 @@ function love.update(dt)
 end
 
 function love.draw()
-	platform.display()
-
 	gameModule.display()
 
 	--only draw the players if a map is selected
