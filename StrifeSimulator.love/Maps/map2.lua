@@ -14,7 +14,7 @@ local rightWall
 local timer = 0
 
 function map2Module.getPlatforms()
-	return {platform1, platform2, platform3}
+	return {ground, platform1, platform2, platform3}
 end
 
 function map2Module.load()

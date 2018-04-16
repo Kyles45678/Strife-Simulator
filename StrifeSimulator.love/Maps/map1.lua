@@ -10,9 +10,10 @@ local platform2
 local platform3
 local leftWall
 local rightWall
+local midWall
 
 function map1Module.getPlatforms()
-	return {platform1, platform2, platform3, leftWall, rightWall}
+	return {ground, platform1, platform2, platform3, leftWall, rightWall, midWall}
 end
 
 function map1Module.load()
@@ -62,6 +63,7 @@ function map1Module.load()
 	leftWall.Size.Y = 600
 	leftWall.Position.X = -1
 	leftWall.Position.Y = 0
+	leftWall.Type = "Wall"
 
 	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill", 255, 255, 255)
 	rightWall.CanCollide = true
@@ -69,6 +71,15 @@ function map1Module.load()
 	rightWall.Size.Y = 600
 	rightWall.Position.X = 800
 	rightWall.Position.Y = 0
+	rightWall.Type = "Wall"
+
+	midWall = environmentModule.FlatPlatform:new("Mid Wall", "fill", 255, 255, 255)
+	midWall.CanCollide = true
+	midWall.Size.X = 1
+	midWall.Size.Y = 600
+	midWall.Position.X = 400
+	midWall.Position.Y = 0
+	midWall.Type = "Wall"
 end
 
 function map1Module.unload()
@@ -78,10 +89,11 @@ function map1Module.unload()
 	platform3.CanCollide = false
 	leftWall.CanCollide = false
 	rightWall.CanCollide = false
+	midWall.CanCollide = false
 end
 
 function map1Module.update(dt)
-	
+
 end
 
 function map1Module.display()
@@ -105,6 +117,9 @@ function map1Module.display()
 
 	--draw right wall
 	rightWall.display()
+
+	--draw mid wall
+	midWall.display()
 end
 
 return map1

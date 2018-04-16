@@ -11,7 +11,7 @@ local platform3
 local platform4
 
 function map3Module.getPlatforms()
-	return {platform1, platform2, platform3, platform4}
+	return {ground, platform1, platform2, platform3, platform4}
 end
 
 function map3Module.load()

@@ -4,6 +4,7 @@ gameModule = gameModuleName
 local map1Module = require("Maps.map1")
 local map2Module = require("Maps.map2")
 local map3Module = require("Maps.map3")
+local map3Module = require("Maps.map4")
 local constantsModule = require("LuaLib.constants")
 
 --images
@@ -29,6 +30,7 @@ function gameModule.load()
 	map1.load()
 	map2.load()
 	map3.load()
+	map4.load()
 
 	--title screen rectangles
 	InstructionsRect = environmentModule.FlatPlatform:new("InstructionsRect", "line", 255, 255, 255)
@@ -74,6 +76,7 @@ function gameModule.unload()
 	map1.unload()
 	map2.unload()
 	map3.unload()
+	map4.unload()
 end
 
 --[[
@@ -128,8 +131,8 @@ function gameModule.update(dt)
 	--make sure screens are in range
 	if screen < constantsModule.titleScreen then
 		screen = constantsModule.titleScreen
-	elseif screen > constantsModule.bryGuy then
-		screen = constantsModule.bryGuy
+	elseif screen > 8 then
+		screen = 8
 	end
 
 	--control which screen is being displayed
@@ -159,6 +162,8 @@ function gameModule.update(dt)
 		--click on map 3 icon to go to map 3
 		elseif gameModule.clicked(Map3Rect) then
 			screen = 6
+		elseif love.keyboard.isDown('kp4') then
+			screen = 7
 		end
 	end
 
@@ -169,8 +174,8 @@ function gameModule.update(dt)
 
 	--We have the meats
 	if screen == 1 and love.keyboard.isDown('9') and love.keyboard.isDown('3') and love.keyboard.isDown('0') then
-		screen = 7
-	elseif screen == 7 and love.keyboard.isDown('backspace') then
+		screen = 8
+	elseif screen == 8 and love.keyboard.isDown('backspace') then
 		screen = 1
 	end
 end
@@ -200,17 +205,26 @@ function gameModule.display()
 		map1.display()
 		map2.unload()
 		map3.unload()
+		map4.unload()
 	elseif screen == constantsModule.map2 then
 		map2.load()
 		map2.display()
 		map1.unload()
 		map3.unload()
+		map4.unload()
 	elseif screen == constantsModule.map3 then
 		map3.load()
 		map3.display()
 		map1.unload()
 		map2.unload()
-	elseif screen == constantsModule.bryGuy then
+		map4.unload()
+	elseif screen == 7 then
+		map4.load()
+		map4.display()
+		map1.unload()
+		map2.unload()
+		map3.unload()
+	elseif screen == 8 then
 		love.graphics.draw(BryGuy, 0, 0)
 		gameModule.unload()
 	else

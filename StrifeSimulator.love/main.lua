@@ -22,7 +22,7 @@ function love.update(dt)
 	gameModule.update(dt)
 
 	--only control the players if a map is selected
-	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 then
+	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.update(dt)
 		player2.update(dt)
 	end
@@ -36,7 +36,7 @@ function love.draw()
 	gameModule.display()
 
 	--only draw the players if a map is selected
-	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 then
+	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.display()
 		player2.display()
 	end
