@@ -14,6 +14,7 @@ local MapSelection = love.graphics.newImage('assets/backgrounds/mapSelection.png
 local Map1Icon = love.graphics.newImage('Maps/Icons/map1Icon.png')
 local Map2Icon = love.graphics.newImage('Maps/Icons/map2Icon.png')
 local Map3Icon = love.graphics.newImage('Maps/Icons/map3Icon.png')
+local Map4Icon = love.graphics.newImage('Maps/Icons/map4Icon.png')
 local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
 local cursor = love.graphics.newImage('assets/cursors/crosshair.png')
 
@@ -70,6 +71,12 @@ function gameModule.load()
 	Map3Rect.Size.Y = 122
 	Map3Rect.Position.X = 159
 	Map3Rect.Position.Y = 369
+
+	Map4Rect = environmentModule.FlatPlatform:new("Map4Rect", "line", 34, 177, 76)
+	Map4Rect.Size.X = 162
+	Map4Rect.Size.Y = 122
+	Map4Rect.Position.X = 479
+	Map4Rect.Position.Y = 369
 end
 
 function gameModule.unload()
@@ -125,14 +132,15 @@ function gameModule.update(dt)
 	map1.update(dt)
 	map2.update(dt)
 	map3.update(dt)
+	map4.update(dt)
 
 	gameModuleName.screen = screen
 
 	--make sure screens are in range
 	if screen < constantsModule.titleScreen then
 		screen = constantsModule.titleScreen
-	elseif screen > 8 then
-		screen = 8
+	elseif screen > constantsModule.bryGuy then
+		screen = constantsModule.bryGuy
 	end
 
 	--control which screen is being displayed
@@ -147,7 +155,7 @@ function gameModule.update(dt)
 		end
 	end
 
-	--backspace to go back to title screen
+	--click on "back" to go back to title screen
 	if (screen == 2 or screen == 3) and gameModule.clicked(BackRect) then
 		screen = 1
 	end
@@ -162,7 +170,8 @@ function gameModule.update(dt)
 		--click on map 3 icon to go to map 3
 		elseif gameModule.clicked(Map3Rect) then
 			screen = 6
-		elseif love.keyboard.isDown('kp4') then
+		--click on map 4 icon to go to map 4
+		elseif gameModule.clicked(Map4Rect) then
 			screen = 7
 		end
 	end
@@ -198,6 +207,7 @@ function gameModule.display()
 		love.graphics.draw(Map1Icon, 160, 200)
 		love.graphics.draw(Map2Icon, 480, 200)
 		love.graphics.draw(Map3Icon, 160, 370)
+		love.graphics.draw(Map4Icon, 480, 370)
 		BackRect.display()
 		gameModule.unload()
 	elseif screen == constantsModule.map1 then
@@ -218,13 +228,13 @@ function gameModule.display()
 		map1.unload()
 		map2.unload()
 		map4.unload()
-	elseif screen == 7 then
+	elseif screen == constantsModule.map4 then
 		map4.load()
 		map4.display()
 		map1.unload()
 		map2.unload()
 		map3.unload()
-	elseif screen == 8 then
+	elseif screen == constantsModule.bryGuy then
 		love.graphics.draw(BryGuy, 0, 0)
 		gameModule.unload()
 	else

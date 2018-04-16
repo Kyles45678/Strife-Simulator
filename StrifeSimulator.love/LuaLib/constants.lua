@@ -24,6 +24,7 @@ constantsModule.mapSelection = 3
 constantsModule.map1 = 4
 constantsModule.map2 = 5
 constantsModule.map3 = 6
-constantsModule.bryGuy = 7
+constantsModule.map4 = 7
+constantsModule.bryGuy = 8
 
 return constantsModule

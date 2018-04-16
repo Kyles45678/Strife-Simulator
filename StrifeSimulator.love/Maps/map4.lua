@@ -16,7 +16,7 @@ end
 
 function map4Module.load()
 	--set background properties
-	background = environmentModule.FlatPlatform:new("Background", "fill", 0, 162, 232)
+	background = environmentModule.FlatPlatform:new("Background", "fill", 115, 50, 115)
 	background.CanCollide = false
 	background.Size.X = love.graphics.getWidth()
 	background.Size.Y = love.graphics.getHeight()
@@ -24,7 +24,7 @@ function map4Module.load()
 	background.Position.Y = 0
 
 	--set ground properties
-	ground = environmentModule.FlatPlatform:new("Ground", "fill", 170, 20, 20)
+	ground = environmentModule.FlatPlatform:new("Ground", "fill", 40, 40, 40)
 	ground.CanCollide = true
 	ground.Size.X = love.graphics.getWidth() / 2
 	ground.Size.Y = love.graphics.getHeight() / 4
@@ -32,7 +32,7 @@ function map4Module.load()
 	ground.Position.Y = 450
 
 	--set platform1 properties
-	platform1 = environmentModule.FlatPlatform:new("Platform1", "fill", 30, 30, 30)
+	platform1 = environmentModule.FlatPlatform:new("Platform1", "fill", 70, 70, 70)
 	platform1.CanCollide = true
 	platform1.Size.X = 200
 	platform1.Size.Y = 15
@@ -40,7 +40,7 @@ function map4Module.load()
 	platform1.Position.Y = 365
 
 	--set platform2 properties
-	platform2 = environmentModule.FlatPlatform:new("Platform2", "fill", 30, 30, 30)
+	platform2 = environmentModule.FlatPlatform:new("Platform2", "fill", 100, 100, 100)
 	platform2.CanCollide = true
 	platform2.Size.X = 200
 	platform2.Size.Y = 15
@@ -48,20 +48,20 @@ function map4Module.load()
 	platform2.Position.Y = 280
 
 	--set platform3 properties
-	platform3 = environmentModule.FlatPlatform:new("Platform3", "fill", 30, 30, 30)
+	platform3 = environmentModule.FlatPlatform:new("Platform3", "fill", 130, 130, 130)
 	platform3.CanCollide = true
 	platform3.Size.X = 200
 	platform3.Size.Y = 15
 	platform3.Position.X = 300
-	platform3.Position.Y = 280
+	platform3.Position.Y = 195
 
 	--set platform4 properties
-	platform4 = environmentModule.FlatPlatform:new("Platform4", "fill", 30, 30, 30)
+	platform4 = environmentModule.FlatPlatform:new("Platform4", "fill", 160, 160, 160)
 	platform4.CanCollide = true
 	platform4.Size.X = 200
 	platform4.Size.Y = 15
 	platform4.Position.X = 300
-	platform4.Position.Y = 280
+	platform4.Position.Y = 110
 end
 
 function map4Module.unload()
