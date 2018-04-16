@@ -19,6 +19,7 @@ function envirModuleName.FlatPlatform:new(name, fill, redCol, greenCol, blueCol)
 	object.CanCollide = true
 	object.ZIndex = 1
 	object.Visibile = false
+	object.Type = "Platform"
 
 	object.Position = {
 		X = 0;
