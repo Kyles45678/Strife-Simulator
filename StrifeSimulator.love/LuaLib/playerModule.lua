@@ -14,6 +14,7 @@ local gameModule = require('LuaLib.gameModule')
 plyModuleName.Player = {}
 
 local allPlayers = {}
+local chek = false
 
 function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey, startX, startY, playerIndex)	
 	local player = {}
@@ -309,10 +310,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			table.insert(allPlats, allPlayers[i].hurtBox)
 		end
 		for i = 1, #allPlats do
+
 			local v = allPlats[i]
-			local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 
 			if v.Type == "Platform" then
+				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				if player.Velocity.Y >= 0 then
 					if check then
 						if v.CanCollide then
@@ -326,15 +328,18 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					end
 				end
 			elseif v.Type == "Wall" then
+				local check = environmentModule.CheckCollision(player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
+				chek = check
 				if check then
-					if player.Velocity.X < 0 then	--Velocity to the left
-						if player.Position.X <= (v.Position.X + v.Size.X) then
-							player.Velocity.X = 0
-						end
-					else
-						if player.Position.X > (v.Position.X) then
-							player.Velocity.X = 0
-						end
+					if player.Position.X < v.Position.X then	--Velocity to the left
+						player.Position.X = v.Position.X --+ v.Size.X
+						player.Velocity.X = 0
+						break
+					end
+					if player.Position.X > (v.Position.X) then
+						player.Position.X = v.Position.X
+						player.Velocity.X = 0
+						break
 					end
 				end
 			end
@@ -467,7 +472,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			player.floorHitbox.display()
 			player.hurtBox.display()
-
+			love.graphics.print(tostring(chek), 100, 100 * playerIndex)
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 			if player.state == "walk" and not player.attacking and not player.charging then
