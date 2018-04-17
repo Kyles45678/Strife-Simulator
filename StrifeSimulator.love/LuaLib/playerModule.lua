@@ -288,6 +288,14 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.grounded = false                                  
 		end
 
+
+		--Hitboxes
+		player.floorHitbox.Position.X = player.Position.X + 16                       
+		player.floorHitbox.Position.Y = player.Position.Y 
+
+		player.hurtBox.Position.X = player.Position.X + 16  
+		player.hurtBox.Position.Y = player.Position.Y - 64
+
 		--Collision Detection
 		local t1 = map1Mod.getPlatforms()
 		local t2 = map2Mod.getPlatforms()
@@ -328,29 +336,21 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					end
 				end
 			elseif v.Type == "Wall" then
-				local check = environmentModule.CheckCollision(player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
+				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				chek = check
 				if check then
-					if player.Position.X < v.Position.X then	--Velocity to the left
-						player.Position.X = v.Position.X --+ v.Size.X
+					if player.Position.X < (v.Position.X + v.Size.X) then	--Velocity to the left
+						player.Position.X = v.Position.X - player.hurtBox.Size.X - v.Size.X
 						player.Velocity.X = 0
 						break
-					end
-					if player.Position.X > (v.Position.X) then
-						player.Position.X = v.Position.X
+					elseif player.Position.X > (v.Position.X) then
+						player.Position.X = v.Position.X 
 						player.Velocity.X = 0
 						break
 					end
 				end
 			end
 		end
-
-		--Hitboxes
-		player.floorHitbox.Position.X = player.Position.X + 16                       
-		player.floorHitbox.Position.Y = player.Position.Y 
-
-		player.hurtBox.Position.X = player.Position.X + 16  
-		player.hurtBox.Position.Y = player.Position.Y - 64
 
 		--Gaurding
 		if not player.attacking and not player.charging then

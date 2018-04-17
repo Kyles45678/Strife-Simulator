@@ -86,23 +86,6 @@ function gameModule.unload()
 	map4.unload()
 end
 
---[[
-function gameModule.intersects(object)
-	local check = false
-	local mouseX = love.mouse.getX() - cursor:getWidth() / 2
-	local mouseY = love.mouse.getY() - cursor:getHeight() / 2
-	local objectLeftX = object.Position.X
-	local objectRightX = object.Position.X + object.Size.X
-	local objectTopY = object.Position.Y
-	local objectBotY = object.Position.Y + object.Size.Y
-
-	if(mouseX >= objectLeftX and mouseX <= objectRightX and mouseY >= objectTopY and mouseY <= objectBotY) then
-		check = true
-	end
-
-	return check
-end--]]
-
 --check for intersection, returns true if the two objects are intersecting, false if not
 function gameModule.intersects(object)
 	return love.mouse.getX() - cursor:getWidth() / 2 >= object.Position.X and
@@ -242,7 +225,6 @@ function gameModule.display()
 		love.graphics.print("OOF", 10, 10)
 		gameModule.unload()
 	end
-
 
 	if screen == 1 or screen == 2 or screen == 3 then
 		--draw cursor to screen

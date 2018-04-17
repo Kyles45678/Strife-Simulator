@@ -59,15 +59,15 @@ function map1Module.load()
 
 	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill", 255, 255, 255)
 	leftWall.CanCollide = true
-	leftWall.Size.X = 1
+	leftWall.Size.X = 30
 	leftWall.Size.Y = 600
-	leftWall.Position.X = -1
+	leftWall.Position.X = -30
 	leftWall.Position.Y = 0
 	leftWall.Type = "Wall"
 
 	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill", 255, 255, 255)
 	rightWall.CanCollide = true
-	rightWall.Size.X = 1
+	rightWall.Size.X = 30
 	rightWall.Size.Y = 600
 	rightWall.Position.X = 800
 	rightWall.Position.Y = 0
@@ -90,6 +90,8 @@ function map1Module.unload()
 	leftWall.CanCollide = false
 	rightWall.CanCollide = false
 	midWall.CanCollide = false
+	leftWall.Type = "Platform"
+	rightWall.Type = "Platform"
 	midWall.Type = "Platform"
 end
 
