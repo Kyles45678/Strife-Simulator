@@ -339,13 +339,13 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				chek = check
 				if check then
-					if player.Position.X < (v.Position.X + v.Size.X) then	--Velocity to the left
-						player.Position.X = v.Position.X - player.hurtBox.Size.X - v.Size.X
-						player.Velocity.X = 0
+					if player.Velocity.X < 0 and love.keyboard.isDown(leftKey) then	--Velocity to the left
+						player.Position.X = v.Position.X + v.Size.X * (3/4)
+						player.Velocity.X = -player.Velocity.X / 3
 						break
-					elseif player.Position.X > (v.Position.X) then
-						player.Position.X = v.Position.X 
-						player.Velocity.X = 0
+					elseif player.Velocity.X > 0 and love.keyboard.isDown(rightKey) then	--Velocity to the right
+						player.Position.X = v.Position.X - player.floorHitbox.Size.X * (3/2)
+						player.Velocity.X = -player.Velocity.X / 3 
 						break
 					end
 				end
