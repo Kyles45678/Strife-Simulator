@@ -9,9 +9,11 @@ local platform1
 local platform2
 local platform3
 local platform4
+local leftWall
+local rightWall
 
 function map3Module.getPlatforms()
-	return {ground, platform1, platform2, platform3, platform4}
+	return {ground, platform1, platform2, platform3, platform4, leftWall, rightWall}
 end
 
 function map3Module.load()
@@ -62,6 +64,22 @@ function map3Module.load()
 	platform4.Size.Y = 15
 	platform4.Position.X = 300
 	platform4.Position.Y = 195
+
+	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill", 255, 255, 255)
+	leftWall.CanCollide = true
+	leftWall.Size.X = 30
+	leftWall.Size.Y = 600
+	leftWall.Position.X = -30
+	leftWall.Position.Y = 0
+	leftWall.Type = "Wall"
+
+	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill", 255, 255, 255)
+	rightWall.CanCollide = true
+	rightWall.Size.X = 30
+	rightWall.Size.Y = 600
+	rightWall.Position.X = 800
+	rightWall.Position.Y = 0
+	rightWall.Type = "Wall"
 end
 
 function map3Module.unload()
@@ -70,6 +88,10 @@ function map3Module.unload()
 	platform2.CanCollide = false
 	platform3.CanCollide = false
 	platform4.CanCollide = false
+	leftWall.CanCollide = false
+	rightWall.CanCollide = false
+	leftWall.Type = "Platform"
+	rightWall.Type = "Platform"
 end
 
 function map3Module.update(dt)

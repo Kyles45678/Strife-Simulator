@@ -14,7 +14,7 @@ local rightWall
 local timer = 0
 
 function map2Module.getPlatforms()
-	return {ground, platform1, platform2, platform3}
+	return {ground, platform1, platform2, platform3, leftWall, rightWall}
 end
 
 function map2Module.load()
@@ -39,28 +39,6 @@ function map2Module.load()
 	ground.Color.Red = 110
 	ground.Color.Green = 60
 	ground.Color.Blue = 35
-
-	--set left wall properties
-	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill")
-	leftWall.CanCollide = false
-	leftWall.Size.X = 5
-	leftWall.Size.Y = 600
-	leftWall.Position.X = -5
-	leftWall.Position.Y = 0
-	leftWall.Color.Red = 0
-	leftWall.Color.Green = 0
-	leftWall.Color.Blue = 0
-
-	--set right wall properties
-	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill")
-	rightWall.CanCollide = false
-	rightWall.Size.X = 5
-	rightWall.Size.Y = 600
-	rightWall.Position.X = 800
-	rightWall.Position.Y = 0
-	rightWall.Color.Red = 0
-	rightWall.Color.Green = 0
-	rightWall.Color.Blue = 0
 
 	--set platform1 properties
 	platform1 = environmentModule.FlatPlatform:new("Platform1", "fill")
@@ -94,6 +72,22 @@ function map2Module.load()
 	platform3.Color.Red = 0
 	platform3.Color.Green = 0
 	platform3.Color.Blue = 0
+
+	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill", 255, 255, 255)
+	leftWall.CanCollide = true
+	leftWall.Size.X = 30
+	leftWall.Size.Y = 600
+	leftWall.Position.X = -30
+	leftWall.Position.Y = 0
+	leftWall.Type = "Wall"
+
+	rightWall = environmentModule.FlatPlatform:new("Right Wall", "fill", 255, 255, 255)
+	rightWall.CanCollide = true
+	rightWall.Size.X = 30
+	rightWall.Size.Y = 600
+	rightWall.Position.X = 800
+	rightWall.Position.Y = 0
+	rightWall.Type = "Wall"
 end
 
 function map2Module.unload()
@@ -103,8 +97,9 @@ function map2Module.unload()
 	platform3.CanCollide = false
 end
 
+
 function map2Module.update(dt)
-	timer = timer + 1
+	--[[timer = timer + 1
 
 	love.graphics.print(tostring(platform2.Position.Y))
 
@@ -116,7 +111,7 @@ function map2Module.update(dt)
 			platform2.Position.Y = platform2.Position.Y + 1
 			timer = 0
 		end
-	end
+	end--]]
 end
 
 function map2Module.display()
