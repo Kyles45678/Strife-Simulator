@@ -318,9 +318,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			table.insert(allPlats, allPlayers[i].hurtBox)
 		end
 		for i = 1, #allPlats do
-
 			local v = allPlats[i]
-
 			if v.Type == "Platform" then
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				if player.Velocity.Y >= 0 then
@@ -335,15 +333,20 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 						player.ground = player.baseGround
 					end
 				end
-			elseif v.Type == "Wall" then
+			end
+		end
+
+		for i = 1, #allPlats do
+			local v = allPlats[i]
+			if v.Type == "Wall" then
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				chek = check
 				if check then
-					if player.Velocity.X < 0 and love.keyboard.isDown(leftKey) then	--Velocity to the left
+					if player.Velocity.X < 0 then	--Velocity to the left
 						player.Position.X = v.Position.X + v.Size.X * (3/4)
 						player.Velocity.X = -player.Velocity.X / 3
 						break
-					elseif player.Velocity.X > 0 and love.keyboard.isDown(rightKey) then	--Velocity to the right
+					elseif player.Velocity.X > 0 then	--Velocity to the right
 						player.Position.X = v.Position.X - player.floorHitbox.Size.X * (3/2)
 						player.Velocity.X = -player.Velocity.X / 3 
 						break
@@ -472,7 +475,10 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			player.floorHitbox.display()
 			player.hurtBox.display()
-			love.graphics.print(tostring(chek), 100, 100 * playerIndex)
+
+			love.graphics.print(name .. " - " .. tostring(chek), 100, 100 * playerIndex)
+			love.graphics.print(name .. " - " .. tostring(player.grounded), 100, 110 * playerIndex)
+
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 			if player.state == "walk" and not player.attacking and not player.charging then
