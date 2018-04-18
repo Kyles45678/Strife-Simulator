@@ -226,6 +226,10 @@ function gameModule.display()
 		gameModule.unload()
 	end
 
+	if screen == 4 or screen == 5 or screen == 6 or screen == 7 then
+		
+	end
+
 	if screen == 1 or screen == 2 or screen == 3 then
 		--draw cursor to screen
 		love.graphics.setColor(255, 255, 255)

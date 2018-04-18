@@ -14,8 +14,8 @@ function love.load()
 
 	--helperModule.load()
 
-	player1 = playerModule.Player:new("Andrew", constantsModule.player1up, constantsModule.player1down, constantsModule.player1left, constantsModule.player1right, constantsModule.player1attack, love.graphics.getWidth() / 2, love.graphics.getHeight() * (3/4), 1) 
-	player2 = playerModule.Player:new("Biggie Smalls", constantsModule.player2up, constantsModule.player2down, constantsModule.player2left, constantsModule.player2right, constantsModule.player2attack, love.graphics.getWidth() / 2, love.graphics.getHeight() * (3/4), 2)  
+	player1 = playerModule.Player:new("Andrew", constantsModule.player1up, constantsModule.player1down, constantsModule.player1left, constantsModule.player1right, constantsModule.player1attack, love.graphics.getWidth() * (3/8), love.graphics.getHeight() * (3/4), 1) 
+	player2 = playerModule.Player:new("Biggie Smalls", constantsModule.player2up, constantsModule.player2down, constantsModule.player2left, constantsModule.player2right, constantsModule.player2attack, love.graphics.getWidth() * (5/8) - 32, love.graphics.getHeight() * (3/4), 2)  
 end
 
 function love.update(dt)
@@ -39,6 +39,8 @@ function love.draw()
 	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.display()
 		player2.display()
+		love.graphics.print("Player 1 Lives: " .. tostring(player1.lives), 10, 10)
+		love.graphics.print("Player 2 Lives: " .. tostring(player2.lives), 10, 30)
 	end
 end
 
