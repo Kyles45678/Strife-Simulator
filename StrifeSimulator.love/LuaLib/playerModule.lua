@@ -317,6 +317,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #allPlayers do
 			table.insert(allPlats, allPlayers[i].hurtBox)
 		end
+
+		--Floor Detection
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 			if v.Type == "Platform" then
@@ -336,14 +338,15 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			end
 		end
 
+		--Wall Detection
 		for i = 1, #allPlats do
 			local v = allPlats[i]
 			if v.Type == "Wall" then
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-				chek = check
+				
 				if check then
 					if player.Velocity.X < 0 then	--Velocity to the left
-						player.Position.X = v.Position.X + v.Size.X * (3/4)
+						player.Position.X = v.Position.X + v.Size.X/2 
 						player.Velocity.X = -player.Velocity.X / 3
 						break
 					elseif player.Velocity.X > 0 then	--Velocity to the right
@@ -453,6 +456,21 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 						break
 					end
 				end
+
+				local hurtCheck = environmentModule.CheckCollision(player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
+				if enemPly.loaded then
+					chek = check
+					if check then
+						if player.facingDirection == "right" then
+							player.currentImg = player.playerImages.playerRight.Hurt
+							player.Velocity.X = -8
+						elseif player.facingDirection == "left" then
+							player.currentImg = player.playerImages.playerLeft.Hurt
+							player.Velocity.X = 8
+						end
+						break
+					end
+				end
 			end
 		end
 	end
@@ -477,7 +495,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.hurtBox.display()
 
 			love.graphics.print(name .. " - " .. tostring(chek), 100, 100 * playerIndex)
-			love.graphics.print(name .. " - " .. tostring(player.grounded), 100, 110 * playerIndex)
 
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
