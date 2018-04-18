@@ -4,7 +4,6 @@
 local environmentModule = require("LuaLib.environmentModule") --C:\Users\Kathy Senebouttarath\Desktop\Love 2D\StrifeSimulator.love\
 local playerModule = require("LuaLib.playerModule")
 local gameModule = require("LuaLib.gameModule")
-local healthModule = require("LuaLib.healthModule")
 local constantsModule = require("LuaLib.constants")
 
 local player1 
@@ -12,7 +11,6 @@ local player2
 
 function love.load() 
 	gameModule.load()
-	healthModule.load()
 
 	--helperModule.load()
 
@@ -27,7 +25,6 @@ function love.update(dt)
 	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.update(dt)
 		player2.update(dt)
-		healthModule.update(dt)
 	end
 
 	if(love.keyboard.isDown(constantsModule.exitKey)) then
@@ -44,7 +41,6 @@ function love.draw()
 		player2.display()
 		love.graphics.print("Player 1 Lives: " .. tostring(player1.lives), 10, 10)
 		love.graphics.print("Player 2 Lives: " .. tostring(player2.lives), 10, 30)
-		healthModule.display()
 	end
 end
 

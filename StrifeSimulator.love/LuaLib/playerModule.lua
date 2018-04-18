@@ -10,6 +10,7 @@ local map2Mod = require('Maps.map2')
 local map3Mod = require('Maps.map3')
 local map4Mod = require('Maps.map4')
 local gameModule = require('LuaLib.gameModule')
+local healthModule = require("LuaLib.healthModule")
 
 plyModuleName.Player = {}
 
@@ -473,6 +474,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				end
 			end
 		end
+
+		--update player health
+		healthModule.update(dt, player)
 	end
 
 	function player.unload()
@@ -513,6 +517,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.attackBox.display()
 
 			love.graphics.print(name, player.Position.X, player.Position.Y - 80)
+			healthModule.display(player)
 		end
 	end
 
