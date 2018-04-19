@@ -57,6 +57,24 @@ function gameModule.load()
 	BackRect.Position.X = 705
 	BackRect.Position.Y = 14
 
+	NextRect = environmentModule.FlatPlatform:new("Next Rect", "line", 255, 255, 255)
+	NextRect.Size.X = 104
+	NextRect.Size.Y = 45
+	NextRect.Position.X = 662
+	NextRect.Position.Y = 492
+
+	TitleRect = environmentModule.FlatPlatform:new("Title Rect", "line", 255, 255, 255)
+	TitleRect.Size.X = 199
+	TitleRect.Size.Y = 30
+	TitleRect.Position.X = 158
+	TitleRect.Position.Y = 410
+
+	QuitRect = environmentModule.FlatPlatform:new("Quit Rect", "line", 255, 255, 255)
+	QuitRect.Size.X = 71
+	QuitRect.Size.Y = 31
+	QuitRect.Position.X = 561
+	QuitRect.Position.Y = 411
+
 	--map icons
 	Map1Rect = environmentModule.FlatPlatform:new("Map1Rect", "line", 34, 177, 76)
 	Map1Rect.Size.X = 162
@@ -81,12 +99,6 @@ function gameModule.load()
 	Map4Rect.Size.Y = 122
 	Map4Rect.Position.X = 479
 	Map4Rect.Position.Y = 369
-
-	NextRect = environmentModule.FlatPlatform:new("Next Rect", "line", 255, 255, 255)
-	NextRect.Size.X = 104
-	NextRect.Size.Y = 45
-	NextRect.Position.X = 662
-	NextRect.Position.Y = 492
 end
 
 function gameModule.unload()
@@ -180,6 +192,14 @@ function gameModule.update(dt)
 		screen = 9
 	end
 
+	if screen == 9 then
+		if gameModule.clicked(TitleRect) then
+			screen = 1
+		elseif gameModule.clicked(QuitRect) then
+			love.event.quit()
+		end
+	end
+
 	--for testing, delete later
 	if love.keyboard.isDown('kp9') then
 		screen = 1
@@ -251,6 +271,8 @@ function gameModule.display()
 		gameModule.unload()
 		love.graphics.draw(Results, 0, 0)
 		love.graphics.draw(GameOver, 150, 125)
+		TitleRect.display()
+		QuitRect.display()
 	elseif screen == constantsModule.bryGuy then
 		love.graphics.draw(BryGuy, 0, 0)
 		gameModule.unload()
