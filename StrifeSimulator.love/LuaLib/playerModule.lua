@@ -31,7 +31,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.floorHitbox.Position.X = 0                             
 	player.floorHitbox.Position.Y = 0
 
-	player.hurtBox = environmentModule.FlatPlatform:new("Part", "line")
+	player.hurtBox = environmentModule.FlatPlatform:new("PlayerBox", "line")
 	player.hurtBox.Size.X = 32  
 	player.hurtBox.Size.Y = 64  
 	player.hurtBox.Position.X = 0                             
@@ -115,6 +115,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.facingDirection = "left"
 
 	player.attacking = false
+	player.hurting = false
 	player.charging = false
 	player.canAttack = true
 	player.sprinting = false
@@ -148,7 +149,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local dt1 = math.min(dt, 0.07)
 		local frame = dt1 * 30
 
-		if not player.attacking then
+		if not player.attacking and not player.hurting then
 			
 			if player.grounded then
 				if love.keyboard.isDown(rightKey) then
@@ -231,37 +232,54 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 			--Update timers
 			local checkTime 
-			if player.charging then
+			if player.hurting then
 				checkTime = helpModule.Helper.variableDelayChange(0.2, player.personalTimer)
 				if checkTime then
-					player.attacking = true
+					player.hurting = false
+					player.attacking = false
 					player.charging = false
 				end
 			else
-				checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
-				if checkTime then
-					player.attacking = false
-					player.charging = false
+				if player.charging then
+					checkTime = helpModule.Helper.variableDelayChange(0.2, player.personalTimer)
+					if checkTime then
+						player.attacking = true
+						player.charging = false
+					end
+				else
+					checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
+					if checkTime then
+						player.attacking = false
+						player.charging = false
+					end
 				end
 			end
 
 			--Update Images and Hitboxes
-			if player.state == "crouch" or player.state == "jump" then
-				if player.facingDirection == "right" then
-					player.currentImg = player.playerImages.playerRight.LowStab
+			if not player.hurting then
+				if player.state == "crouch" or player.state == "jump" then
+					if player.facingDirection == "right" then
+						player.currentImg = player.playerImages.playerRight.LowStab
 
-					if not player.grounded then
-						player.currentImg = player.playerImages.playerRight.StabDown
-					end
-				elseif player.facingDirection == "left" then
-					player.currentImg = player.playerImages.playerLeft.LowStab
+						if not player.grounded then
+							player.currentImg = player.playerImages.playerRight.StabDown
+						end
+					elseif player.facingDirection == "left" then
+						player.currentImg = player.playerImages.playerLeft.LowStab
 
-					if not player.grounded then
-						player.currentImg = player.playerImages.playerLeft.StabDown
+						if not player.grounded then
+							player.currentImg = player.playerImages.playerLeft.StabDown
+						end
 					end
+				elseif player.state == "walk" or player.state == "idle" then
+					changeAttackAnim(player.facingDirection)
 				end
-			elseif player.state == "walk" or player.state == "idle" then
-				changeAttackAnim(player.facingDirection)
+			else
+				if player.facingDirection == "right" then
+					player.currentImg = player.playerImages.playerRight.Hurt
+				elseif player.facingDirection == "left" then
+					player.currentImg = player.playerImages.playerLeft.Hurt
+				end
 			end
 		end
 
@@ -346,17 +364,24 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			local v = allPlats[i]
 			if v.Type == "Wall" then
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
-				
 				if check then
-					if player.Velocity.X < 0 then	--Velocity to the left
-						player.Position.X = v.Position.X + v.Size.X/2 
-						player.Velocity.X = -player.Velocity.X / 3
+
+					if v.Name ~= "PlayerBox" then
+						if player.Velocity.X < 0 then	--Velocity to the left
+							player.Position.X = v.Position.X + v.Size.X/2 
+							player.Velocity.X = -player.Velocity.X / 3
+						elseif player.Velocity.X > 0 then	--Velocity to the right
+							player.Position.X = v.Position.X - player.floorHitbox.Size.X * (3/2)
+							player.Velocity.X = -player.Velocity.X / 3 
+						end
 						break
-					elseif player.Velocity.X > 0 then	--Velocity to the right
-						player.Position.X = v.Position.X - player.floorHitbox.Size.X * (3/2)
-						player.Velocity.X = -player.Velocity.X / 3 
-						break
+					else
+						--chek = v.Name					
+						--player.Velocity.X = 0
+						--player.Position.X = player.Position.X
+						--break
 					end
+
 				end
 			end
 		end
@@ -448,20 +473,19 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 					
 					local hurtCheck = environmentModule.CheckCollision(enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y, player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y)
-					chek = hurtCheck
 	
 					if enemPly.loaded then
 						if hurtCheck then
 							if enemPly.facingDirection == "right" then
-								player.currentImg = player.playerImages.playerRight.Hurt
-								player.Velocity.X = 8
-								player.Velocity.Y = 5
+								player.Velocity.X = 10
 							elseif enemPly.facingDirection == "left" then
-								player.currentImg = player.playerImages.playerLeft.Hurt
-								player.Velocity.X = -8
-								player.Velocity.Y = 5
+								player.Velocity.X = -10
 							end
-							--healthModule.damage(player, 1)
+							player.Velocity.Y = -200
+							enemPly.attacking = false
+							enemPly.charging = false
+							player.hurting = true
+							healthModule.damage(player, player.damage)
 							break
 						end
 					end
