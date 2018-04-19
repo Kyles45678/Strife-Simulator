@@ -39,7 +39,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.hurtBox.Type = "Wall"
 
 	player.attackBox = environmentModule.FlatPlatform:new("Part", "line", 255, 255, 0)
-	player.attackBox.Size.X = 20  
+	player.attackBox.Size.X = 42 
 	player.attackBox.Size.Y = 14  
 	player.attackBox.Position.X = 0                             
 	player.attackBox.Position.Y = 0
@@ -120,6 +120,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.canAttack = true
 	player.sprinting = false
 	player.grounded = true
+	player.hitPlayers = {}
 
 	local allPlats = nil
 	table.insert(allPlayers, playerIndex, player)
@@ -150,7 +151,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		local frame = dt1 * 30
 
 		if not player.attacking and not player.hurting then
-			
+			player.hitPlayers = {}
 			if player.grounded then
 				if love.keyboard.isDown(rightKey) then
 					if player.state ~= "crouch" then
@@ -233,7 +234,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			--Update timers
 			local checkTime 
 			if player.hurting then
-				checkTime = helpModule.Helper.variableDelayChange(0.2, player.personalTimer)
+				checkTime = helpModule.Helper.variableDelayChange(0.8, player.personalTimer)
 				if checkTime then
 					player.hurting = false
 					player.attacking = false
@@ -247,7 +248,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 						player.charging = false
 					end
 				else
-					checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
+					if player.grounded then
+						checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
+					else
+						checkTime = helpModule.Helper.variableDelayChange(0.6, player.personalTimer)
+					end
 					if checkTime then
 						player.attacking = false
 						player.charging = false
@@ -410,21 +415,25 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 		--Attacking
 		if player.attacking and not player.charging then
+			player.attackBox.Size.X = 42 
+			player.attackBox.Size.Y = 14 
 			if player.state == "idle" or player.state == "walk" then
 				player.attackBox.Position.Y = player.Position.Y - 48
 				if player.facingDirection == "right" then
-					player.attackBox.Position.X = player.Position.X + 44
+					player.attackBox.Position.X = player.Position.X + 22
 				elseif player.facingDirection == "left" then
 					player.attackBox.Position.X = player.Position.X
 				end
 			elseif player.state == "crouch" then
 				player.attackBox.Position.Y = player.Position.Y - 28
 				if player.facingDirection == "right" then
-					player.attackBox.Position.X = player.Position.X + 44
+					player.attackBox.Position.X = player.Position.X + 22
 				elseif player.facingDirection == "left" then
 					player.attackBox.Position.X = player.Position.X
 				end
 			elseif player.state == "jump" then
+				player.attackBox.Size.X = 20 
+				player.attackBox.Size.Y = 14 
 				player.attackBox.Position.Y = player.Position.Y - 4
 				player.attackBox.Position.X = player.Position.X + 22
 			end
@@ -462,10 +471,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					local check = environmentModule.CheckCollision(player.gaurdBox.Position.X, player.gaurdBox.Position.Y, player.gaurdBox.Size.X, player.gaurdBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
 					if enemPly.loaded then
 						if check then
-							if player.facingDirection == "right" then
-								player.Velocity.X = -8
-							elseif player.facingDirection == "left" then
+							enemPly.hitPlayers[player] = true
+							if enemPly.facingDirection == "right" then
 								player.Velocity.X = 8
+							elseif enemPly.facingDirection == "left" then
+								player.Velocity.X = -8
 							end
 							break
 						end
@@ -475,15 +485,16 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					local hurtCheck = environmentModule.CheckCollision(enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y, player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y)
 	
 					if enemPly.loaded then
-						if hurtCheck then
+						if hurtCheck  and not enemPly.hitPlayers[player] then
+							enemPly.hitPlayers[player] = true
 							if enemPly.facingDirection == "right" then
 								player.Velocity.X = 10
+								enemPly.Velocity.X = -5
 							elseif enemPly.facingDirection == "left" then
 								player.Velocity.X = -10
+								enemPly.Velocity.X = 5
 							end
-							player.Velocity.Y = -200
-							enemPly.attacking = false
-							enemPly.charging = false
+							player.Velocity.Y = -300
 							player.hurting = true
 							healthModule.damage(player, player.damage)
 							break
@@ -503,7 +514,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		table.remove(allPlayers, playerIndex)
 	end
 
-	function player.load()
+	function player.load(startX, startY)
 		player.loaded = true
 		player.Position.X = startX
 		player.Position.Y = startY
