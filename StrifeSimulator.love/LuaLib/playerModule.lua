@@ -412,67 +412,60 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		for i = 1, #allPlayers do
 			local enemPly = allPlayers[i]
 
-			local enemGaurdBox = enemPly.gaurdBox
-			local enemAttackBox = enemPly.attackBox
+			if enemPly.playerIndex ~= player.playerIndex then
+			
+				local enemGaurdBox = enemPly.gaurdBox
+				local enemAttackBox = enemPly.attackBox
 
-			--Detect if the swords clank
-			--[[
-			if player.attacking and enemPly.attacking then
-				local check = environmentModule.CheckCollision(player.attackBox.Position.X, player.attackBox.Position.Y, player.attackBox.Size.X, player.attackBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
-				if enemPly.loaded then
-					if check then
-						if player.facingDirection == "right" then
-							player.Velocity.X = -10
-						elseif player.facingDirection == "left" then
-							player.Velocity.X = 10
+				--Detect the player's sword on opponent's shield
+				if player.attacking then
+					local check = environmentModule.CheckCollision(player.attackBox.Position.X, player.attackBox.Position.Y, player.attackBox.Size.X, player.attackBox.Size.Y, enemGaurdBox.Position.X, enemGaurdBox.Position.Y, enemGaurdBox.Size.X, enemGaurdBox.Size.Y)
+					if enemPly.loaded then
+						if check then
+							if player.facingDirection == "right" then
+								player.Velocity.X = -8
+							elseif player.facingDirection == "left" then
+								player.Velocity.X = 8
+							end
+							break
 						end
-						
-					end
-				end
-			end
-			]]
-			--Detect the player's sword on opponent's shield
-			if player.attacking then
-				local check = environmentModule.CheckCollision(player.attackBox.Position.X, player.attackBox.Position.Y, player.attackBox.Size.X, player.attackBox.Size.Y, enemGaurdBox.Position.X, enemGaurdBox.Position.Y, enemGaurdBox.Size.X, enemGaurdBox.Size.Y)
-				if enemPly.loaded then
-					if check then
-						if player.facingDirection == "right" then
-							player.Velocity.X = -8
-						elseif player.facingDirection == "left" then
-							player.Velocity.X = 8
-						end
-						break
-					end
-				end
-			end
-
-			--Detect the enemy's sword on player's shield
-			if enemPly.attacking then
-				local check = environmentModule.CheckCollision(player.gaurdBox.Position.X, player.gaurdBox.Position.Y, player.gaurdBox.Size.X, player.gaurdBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
-				if enemPly.loaded then
-					if check then
-						if player.facingDirection == "right" then
-							player.Velocity.X = -8
-						elseif player.facingDirection == "left" then
-							player.Velocity.X = 8
-						end
-						break
 					end
 				end
 
-				local hurtCheck = environmentModule.CheckCollision(player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
-				if enemPly.loaded then
-					chek = check
-					if check then
-						if player.facingDirection == "right" then
-							player.currentImg = player.playerImages.playerRight.Hurt
-							player.Velocity.X = -8
-						elseif player.facingDirection == "left" then
-							player.currentImg = player.playerImages.playerLeft.Hurt
-							player.Velocity.X = 8
+				--Detect the enemy's sword on player's shield
+				if enemPly.attacking then
+					local check = environmentModule.CheckCollision(player.gaurdBox.Position.X, player.gaurdBox.Position.Y, player.gaurdBox.Size.X, player.gaurdBox.Size.Y, enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y)
+					if enemPly.loaded then
+						if check then
+							if player.facingDirection == "right" then
+								player.Velocity.X = -8
+							elseif player.facingDirection == "left" then
+								player.Velocity.X = 8
+							end
+							break
 						end
-						break
 					end
+
+					
+					local hurtCheck = environmentModule.CheckCollision(enemAttackBox.Position.X, enemAttackBox.Position.Y, enemAttackBox.Size.X, enemAttackBox.Size.Y, player.hurtBox.Position.X, player.hurtBox.Position.Y, player.hurtBox.Size.X, player.hurtBox.Size.Y)
+					chek = hurtCheck
+	
+					if enemPly.loaded then
+						if hurtCheck then
+							if enemPly.facingDirection == "right" then
+								player.currentImg = player.playerImages.playerRight.Hurt
+								player.Velocity.X = 8
+								player.Velocity.Y = 5
+							elseif enemPly.facingDirection == "left" then
+								player.currentImg = player.playerImages.playerLeft.Hurt
+								player.Velocity.X = -8
+								player.Velocity.Y = 5
+							end
+							--healthModule.damage(player, 1)
+							break
+						end
+					end
+
 				end
 			end
 		end
