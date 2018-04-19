@@ -39,8 +39,6 @@ function love.draw()
 	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.display()
 		player2.display()
-		love.graphics.print("Player 1 Lives: " .. tostring(player1.lives), 10, 10)
-		love.graphics.print("Player 2 Lives: " .. tostring(player2.lives), 10, 30)
 	end
 end
 

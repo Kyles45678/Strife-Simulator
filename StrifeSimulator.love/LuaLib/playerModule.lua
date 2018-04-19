@@ -100,6 +100,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.lives = 3
 	player.personalTimer = {count = 0}
 
+	player.playerIndex = playerIndex
+
 	player.walkSpeed = 18
 	player.sprintSpeed = player.walkSpeed + (player.walkSpeed/2)
 
