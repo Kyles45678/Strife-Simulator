@@ -25,6 +25,8 @@ constantsModule.map1 = 4
 constantsModule.map2 = 5
 constantsModule.map3 = 6
 constantsModule.map4 = 7
-constantsModule.bryGuy = 8
+constantsModule.resultsScreen = 8
+constantsModule.gameOver = 9
+constantsModule.bryGuy = 10
 
 return constantsModule

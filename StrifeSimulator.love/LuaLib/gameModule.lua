@@ -16,6 +16,8 @@ local Map1Icon = love.graphics.newImage('Maps/Icons/map1Icon.png')
 local Map2Icon = love.graphics.newImage('Maps/Icons/map2Icon.png')
 local Map3Icon = love.graphics.newImage('Maps/Icons/map3Icon.png')
 local Map4Icon = love.graphics.newImage('Maps/Icons/map4Icon.png')
+local Results = love.graphics.newImage('assets/backgrounds/resultsScreen.png')
+local GameOver = love.graphics.newImage('assets/backgrounds/gameOver.png')
 local BryGuy = love.graphics.newImage('assets/backgrounds/brian.jpg')
 local cursor = love.graphics.newImage('assets/cursors/crosshair.png')
 
@@ -24,6 +26,7 @@ local screen = constantsModule.titleScreen
 gameModuleName.gravity = -1000
 gameModuleName.maxFallVelocity = 400
 gameModuleName.pressed = false
+gameModuleName.gameOver = false
 
 --turn off mouse visibility
 love.mouse.setVisible(false)
@@ -78,6 +81,12 @@ function gameModule.load()
 	Map4Rect.Size.Y = 122
 	Map4Rect.Position.X = 479
 	Map4Rect.Position.Y = 369
+
+	NextRect = environmentModule.FlatPlatform:new("Next Rect", "line", 255, 255, 255)
+	NextRect.Size.X = 104
+	NextRect.Size.Y = 45
+	NextRect.Position.X = 662
+	NextRect.Position.Y = 492
 end
 
 function gameModule.unload()
@@ -160,15 +169,30 @@ function gameModule.update(dt)
 		end
 	end
 
+	--go to results screen if game ends
+	if healthModule.gameOver then
+		screen = 8
+		healthModule.reset()
+	end
+
+	--click on "next" to go to results screen
+	if screen == 8 and gameModule.clicked(NextRect) then
+		screen = 9
+	end
+
 	--for testing, delete later
 	if love.keyboard.isDown('kp9') then
 		screen = 1
 	end
 
+	if love.keyboard.isDown('kp8') then
+		screen = 8
+	end
+
 	--We have the meats
 	if screen == 1 and love.keyboard.isDown('9') and love.keyboard.isDown('3') and love.keyboard.isDown('0') then
-		screen = 8
-	elseif screen == 8 and love.keyboard.isDown('backspace') then
+		screen = 10
+	elseif screen == 10 and love.keyboard.isDown('backspace') then
 		screen = 1
 	end
 end
@@ -218,6 +242,15 @@ function gameModule.display()
 		map1.unload()
 		map2.unload()
 		map3.unload()
+	elseif screen == constantsModule.resultsScreen then
+		gameModule.unload()
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.draw(Results, 0, 0)
+		NextRect.display()
+	elseif screen == constantsModule.gameOver then
+		gameModule.unload()
+		love.graphics.draw(Results, 0, 0)
+		love.graphics.draw(GameOver, 150, 125)
 	elseif screen == constantsModule.bryGuy then
 		love.graphics.draw(BryGuy, 0, 0)
 		gameModule.unload()
@@ -227,16 +260,8 @@ function gameModule.display()
 		gameModule.unload()
 	end
 
-	if healthModule.gameEnded then
-		love.graphics.draw(TitleScreen, 0, 0)
-		InstructionsRect.display()
-		MapSelectRect.display()
-		gameModule.unload()
-		healthModule.gameEnded = false
-	end
-
-	if screen == 1 or screen == 2 or screen == 3 then
-		--draw cursor to screen
+	--draw cursor to screen in the menus
+	if screen == 1 or screen == 2 or screen == 3 or screen == 8 or screen == 9 then
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(cursor, love.mouse.getX() - cursor:getWidth() / 2, love.mouse.getY() - cursor:getHeight() / 2)
 	end

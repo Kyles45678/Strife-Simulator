@@ -2,11 +2,12 @@ local healthModuleName = {}
 healthModule = healthModuleName
 
 local environmentModule = require("LuaLib.environmentModule")
+--local gameModule = require("LuaLib.gameModule")
 
 local healthBarWidth
 --local playerLives = player.lives
 local playerX
-healthModule.gameEnded = false
+healthModule.gameOver = false
 
 function healthModule.load(player)
 
@@ -28,18 +29,31 @@ function healthModule.update(dt, player)
 	healthBarWidth = player.health * 4
 	--playerLives = player.lives
 
+	--reset player health after they die
 	if player.health < 1 then
 		player.lives = player.lives - 1
 		player.health = 8
 	end
 
+	--game ends when the player has no lives
 	if player.lives == 0 then
-		gameEnded = true
+		healthModule.gameOver = true
 	end
 
+	--make sure the player's lives don't go below zero
 	if player.lives < 0 then
 		player.lives = 0
 	end
+
+	--if the game ends, reset the player's health and lives
+	if healthModule.gameOver then
+		player.health = 8
+		player.lives = 3
+	end
+end
+
+function healthModule.reset()
+	healthModule.gameOver = false
 end
 
 function healthModule.display(player)
