@@ -6,6 +6,7 @@ local map2Module = require("Maps.map2")
 local map3Module = require("Maps.map3")
 local map3Module = require("Maps.map4")
 local constantsModule = require("LuaLib.constants")
+local healthModule = require("LuaLib.healthModule")
 
 --images
 local TitleScreen = love.graphics.newImage('assets/backgrounds/titleScreen.png')
@@ -224,6 +225,14 @@ function gameModule.display()
 		love.graphics.draw(BryGuy, 0, 0)
 		love.graphics.print("OOF", 10, 10)
 		gameModule.unload()
+	end
+
+	if healthModule.gameEnded then
+		love.graphics.draw(TitleScreen, 0, 0)
+		InstructionsRect.display()
+		MapSelectRect.display()
+		gameModule.unload()
+		healthModule.gameEnded = false
 	end
 
 	if screen == 1 or screen == 2 or screen == 3 then
