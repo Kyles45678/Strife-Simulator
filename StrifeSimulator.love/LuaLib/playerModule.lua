@@ -523,6 +523,15 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		table.insert(allPlayers, playerIndex, player)
 	end
 
+	function player.reset(x, y)
+		player.Position.X = x
+		player.Position.Y = y
+		player.Velocity.X = 0
+		player.Velocity.Y = 0
+		player.health = 8
+		player.lives = 3
+	end
+
 	function player.display()
 		if player.loaded then
 			player.floorHitbox.display()

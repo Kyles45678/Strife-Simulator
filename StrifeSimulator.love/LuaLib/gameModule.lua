@@ -4,7 +4,7 @@ gameModule = gameModuleName
 local map1Module = require("Maps.map1")
 local map2Module = require("Maps.map2")
 local map3Module = require("Maps.map3")
-local map3Module = require("Maps.map4")
+local map4Module = require("Maps.map4")
 local constantsModule = require("LuaLib.constants")
 local healthModule = require("LuaLib.healthModule")
 
@@ -183,8 +183,9 @@ function gameModule.update(dt)
 
 	--go to results screen if game ends
 	if healthModule.gameOver then
+		--love.timer.sleep(0.5)
 		screen = 8
-		healthModule.reset()
+		healthModule.gameOver = false
 	end
 
 	--click on "next" to go to results screen

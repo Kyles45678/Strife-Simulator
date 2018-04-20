@@ -21,6 +21,12 @@ end
 function love.update(dt)
 	gameModule.update(dt)
 
+	--reset the players if not playing
+	if gameModule.screen == 3 or screen == 8 then
+		player1.reset(love.graphics.getWidth() * (3/8), love.graphics.getHeight() * (3/4))
+		player2.reset(love.graphics.getWidth() * (5/8), love.graphics.getHeight() * (3/4))
+	end
+
 	--only control the players if a map is selected
 	if gameModule.screen == 4 or gameModule.screen == 5 or gameModule.screen == 6 or gameModule.screen == 7 then
 		player1.update(dt)

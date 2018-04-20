@@ -44,16 +44,6 @@ function healthModule.update(dt, player)
 	if player.lives < 0 then
 		player.lives = 0
 	end
-
-	--if the game ends, reset the player's health and lives
-	if healthModule.gameOver then
-		player.health = 8
-		player.lives = 3
-	end
-end
-
-function healthModule.reset()
-	healthModule.gameOver = false
 end
 
 function healthModule.display(player)
