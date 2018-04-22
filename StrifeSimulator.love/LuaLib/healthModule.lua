@@ -48,15 +48,23 @@ end
 
 function healthModule.display(player)
 	--display a health bar above the player
-	love.graphics.setColor(255, 70, 70)
-	love.graphics.rectangle('fill', player.hurtBox.Position.X, player.hurtBox.Position.Y - 25, healthBarWidth, 10)
+	if player.lives == 3 then
+		love.graphics.setColor(255, 70, 70)
+	elseif player.lives == 2 then
+		love.graphics.setColor(225, 15, 20)
+	elseif player.lives == 1 then
+		love.graphics.setColor(200, 0, 5)
+	end
+	love.graphics.rectangle('fill', player.hurtBox.Position.X, player.hurtBox.Position.Y - 25, player.health * 4, 10)
 
 	--display player health
 	love.graphics.setColor(255, 255, 55)
 	if player.playerIndex == 1 then
 		love.graphics.print("Player " .. tostring(player.playerIndex) .. " Lives: " .. tostring(player.lives), 100, 15)
+		love.graphics.print("Player " .. tostring(player.playerIndex) .. " Health: " .. tostring(player.health), 100, 30)
 	elseif player.playerIndex == 2 then
 		love.graphics.print("Player " .. tostring(player.playerIndex) .. " Lives: " .. tostring(player.lives), 600, 15)
+		love.graphics.print("Player " .. tostring(player.playerIndex) .. " Health: " .. tostring(player.health), 600, 30)
 	end
 end
 

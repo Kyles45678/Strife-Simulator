@@ -122,12 +122,24 @@ function gameModule.clicked(object)
 
 	if gameModule.intersects(object) then
 		if love.mouse.isDown(1) and gameModuleName.pressed == false then
+			object.Color.Red = 80
+			object.Color.Green = 80
+			object.Color.Blue = 80
 			gameModuleName.pressed = true
 			check = false
 		elseif love.mouse.isDown(1) == false and gameModuleName.pressed == true then
+			object.Color.Red = 255
+			object.Color.Green = 255
+			object.Color.Blue = 255
 			gameModuleName.pressed = false
 			check = true
 		end
+	--[[elseif not gameModule.intersects(object) then
+		object.Color.Red = 255
+		object.Color.Green = 255
+		object.Color.Blue = 255
+		gameModuleName.pressed = false
+		check = false--]]
 	end
 
 	return check
