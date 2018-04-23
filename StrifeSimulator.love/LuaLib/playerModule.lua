@@ -539,7 +539,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			player.floorHitbox.display()
 			player.hurtBox.display()
 
-			love.graphics.print(name .. " - " .. tostring(chek), 100, 100 * playerIndex)
+			--love.graphics.print(name .. " - " .. tostring(chek), 100, 100 * playerIndex)
 
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
