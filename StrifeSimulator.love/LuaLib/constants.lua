@@ -1,3 +1,7 @@
+-------------------------------constants.lua-----------------------------------------------
+
+--holds constant values for use elsewhere in the program
+
 local constantsModuleName = {}
 constantsModule = constantsModuleName
 
@@ -30,3 +34,4 @@ constantsModule.gameOver = 9
 constantsModule.bryGuy = 10
 
 return constantsModule
+-------------------------------------------------------------------------------------------------------

@@ -1,8 +1,11 @@
+--------------------------------healthModule.lua-------------------------------------------------
+
+--used to control the player's health and lives during the game
+
 local healthModuleName = {}
 healthModule = healthModuleName
 
 local environmentModule = require("LuaLib.environmentModule")
---local gameModule = require("LuaLib.gameModule")
 
 local healthBarWidth
 --local playerLives = player.lives
@@ -69,3 +72,4 @@ function healthModule.display(player)
 end
 
 return healthModule
+-------------------------------------------------------------------------------------------------------

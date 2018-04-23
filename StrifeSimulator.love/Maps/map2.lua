@@ -1,3 +1,7 @@
+---------------------------------------map2.lua---------------------------------------------------
+
+--this holds the data for the second map
+
 local map2Module = {}
 map2 = map2Module
 
@@ -10,8 +14,6 @@ local platform2
 local platform3
 local leftWall
 local rightWall
-
-local timer = 0
 
 function map2Module.getPlatforms()
 	return {ground, platform1, platform2, platform3, leftWall, rightWall}
@@ -84,24 +86,10 @@ end
 
 
 function map2Module.update(dt)
-	--[[timer = timer + 1
 
-	love.graphics.print(tostring(platform2.Position.Y))
-
-	if timer / 60 == 0 then
-		if platform2.Position.Y > 100 then
-			platform2.Position.Y = platform2.Position.Y - 1
-			timer = 0
-		elseif platform2.Position.Y < 400 then
-			platform2.Position.Y = platform2.Position.Y + 1
-			timer = 0
-		end
-	end--]]
 end
 
 function map2Module.display()
-	--love.graphics.print(tostring(platform2.Position.Y))
-
 	--draw background
 	background.display()
 
@@ -119,3 +107,4 @@ function map2Module.display()
 end
 
 return map2
+-------------------------------------------------------------------------------------------------------

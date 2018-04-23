@@ -1,3 +1,7 @@
+-------------------------------gameModule.lua---------------------------------------------------
+
+--controls the screens of the game as well as interaction with the menus
+
 local gameModuleName = {}
 gameModule = gameModuleName
 
@@ -134,12 +138,6 @@ function gameModule.clicked(object)
 			gameModuleName.pressed = false
 			check = true
 		end
-	--[[elseif not gameModule.intersects(object) then
-		object.Color.Red = 255
-		object.Color.Green = 255
-		object.Color.Blue = 255
-		gameModuleName.pressed = false
-		check = false--]]
 	end
 
 	return check
@@ -303,3 +301,4 @@ function gameModule.display()
 end
 
 return gameModule
+-------------------------------------------------------------------------------------------------------
