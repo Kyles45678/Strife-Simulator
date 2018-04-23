@@ -13,11 +13,11 @@ local map3Mod = require('Maps.map3')
 local map4Mod = require('Maps.map4')
 local gameModule = require('LuaLib.gameModule')
 local healthModule = require("LuaLib.healthModule")
+local soundModule = require("LuaLib.soundModule")
 
 plyModuleName.Player = {}
 
 local allPlayers = {}	--List used to keep track of all players in the game
-local chek = false	--Used for debugging
 
 function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey, startX, startY, playerIndex)	
 	local player = {}
@@ -232,7 +232,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				end
 			end
 		else --If player.attacking then
-
 			--Update timers
 			local checkTime 
 			if player.hurting then
@@ -372,7 +371,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			if v.Type == "Wall" then
 				local check = environmentModule.CheckCollision(player.floorHitbox.Position.X, player.floorHitbox.Position.Y, player.floorHitbox.Size.X, player.floorHitbox.Size.Y, v.Position.X, v.Position.Y, v.Size.X, v.Size.Y)
 				if check then
-
 					if v.Name ~= "PlayerBox" then
 						if player.Velocity.X < 0 then	--Velocity to the left
 							player.Position.X = v.Position.X + v.Size.X/2 
@@ -382,13 +380,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 							player.Velocity.X = -player.Velocity.X / 3 
 						end
 						break
-					else
-						--chek = v.Name					
-						--player.Velocity.X = 0
-						--player.Position.X = player.Position.X
-						--break
 					end
-
 				end
 			end
 		end
@@ -538,8 +530,6 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			player.floorHitbox.display()
 			player.hurtBox.display()
-
-			--love.graphics.print(name .. " - " .. tostring(chek), 100, 100 * playerIndex)
 
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
