@@ -1,7 +1,8 @@
+---------------------------------------------------------------------ENVIRONMENT MODULE-----------------------------------------------------
+--This module will create platforms and parts for maps.
 
 local envirModuleName = {}			--The local name of the module (to be used in here only!)
 environmentModule = envirModuleName	--The actual name of the module
-
 envirModuleName.FlatPlatform = {}
 
 function envirModuleName.CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
@@ -47,3 +48,4 @@ function envirModuleName.FlatPlatform:new(name, fill, redCol, greenCol, blueCol)
 end
 
 return environmentModule	--Returns all these functions and variables to the program it is being required
+-------------------------------------------------------------------------------------------------------------------------------------

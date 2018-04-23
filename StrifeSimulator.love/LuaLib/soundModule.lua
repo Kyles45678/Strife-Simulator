@@ -1,23 +1,21 @@
+---------------------------------------------------------------------SOUND MODULE-----------------------------------------------------
+--This module will control the sound effects and music for the game
+
 local soundModuleName = {}
 soundModule = soundModuleName
-
-sound = love.audio.newSource("pling.wav", "static") -- the "static" tells LÖVE to load the file into memory, good for short sound effects
-music = love.audio.newSource("techno.ogg") -- if "static" is omitted, LÖVE will stream the file from disk, good for longer music tracks
-
-sound:play()
-music:play()
 
 local sources = {} --List for sound effects
 
 function sfx(soundId, volume, pitch)	--Sounds are static (you can spam this)
 
+	--If volume or pitch are set to nothing, they get a default of 100%
 	volume = volume or 1.0
 	pitch = pitch or 1.0
 
 	local function createSound()
 		local newSound = love.audio.newSource(soundId, "static")
-		newSound:setVolume(volume) -- 90% of ordinary volume
-		newSound:setPitch(pitch) -- one octave lower
+		newSound:setVolume(volume) 
+		newSound:setPitch(pitch) 
 		return newSound
 	end
 
@@ -32,8 +30,9 @@ function sfx(soundId, volume, pitch)	--Sounds are static (you can spam this)
 
 end
 
-function music(soundId, volume, pitch, loop)	--Music is streamable
+function music(soundId, volume, pitch, loop)	--Music is streamable (Dont spam this!!!)
 
+	--If volume or pitch are set to nothing, they get a default of 100%
 	volume = volume or 1.0
 	pitch = pitch or 1.0
 
@@ -46,3 +45,4 @@ function music(soundId, volume, pitch, loop)	--Music is streamable
 end
 
 return soundModule
+---------------------------------------------------------------------------------------------------------------------------------

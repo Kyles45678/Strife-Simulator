@@ -1,3 +1,5 @@
+---------------------------------------------------------------------PLAYER MODULE-----------------------------------------------------
+--This module will control all the player related stuff
 
 local plyModuleName = {}			--The local name of the module (to be used in here only!)
 playerModule = plyModuleName	--The actual name of the module
@@ -14,8 +16,8 @@ local healthModule = require("LuaLib.healthModule")
 
 plyModuleName.Player = {}
 
-local allPlayers = {}
-local chek = false
+local allPlayers = {}	--List used to keep track of all players in the game
+local chek = false	--Used for debugging
 
 function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attackKey, startX, startY, playerIndex)	
 	local player = {}
@@ -564,3 +566,4 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 end
 
 return playerModule	--Returns all these functions and variables to the program it is being required
+-------------------------------------------------------------------------------------------------------------------------------------
