@@ -528,11 +528,11 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	function player.display()
 		if player.loaded then
-			player.floorHitbox.display()
-			player.hurtBox.display()
+			--player.floorHitbox.display()
+			--player.hurtBox.display()
 
-			love.graphics.setColor(255, 0, 0)
-			love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
+			--love.graphics.setColor(255, 0, 0)
+			--love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 			if player.state == "walk" and not player.attacking and not player.charging then
 				if player.facingDirection == "left" then
 					player.playerImages.playerLeft.Walk.draw(player.Position.X, player.Position.Y)
@@ -544,8 +544,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				love.graphics.draw(player.currentImg, player.Position.X, player.Position.Y, 0, 1, 1, 0, 64)
 			end
 
-			player.gaurdBox.display()
-			player.attackBox.display()
+			--player.gaurdBox.display()
+			--player.attackBox.display()
 
 			love.graphics.print(name, player.Position.X, player.Position.Y - 80)
 			healthModule.display(player)
