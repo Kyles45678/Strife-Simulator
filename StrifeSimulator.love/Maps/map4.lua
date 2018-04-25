@@ -16,6 +16,12 @@ local platform4
 local leftWall
 local rightWall
 
+--For Music
+local firstLoopDone = false
+local map1Sound = 'assets/sounds/map1Music/HomestuckShowtime.mp3'
+local musicObject = nil
+
+--For platforms
 local picounter = 0
 
 function map4Module.getPlatforms()
@@ -108,6 +114,11 @@ function map4Module.unload()
 	rightWall.CanCollide = false
 	leftWall.Type = "Platform"
 	rightWall.Type = "Platform"
+
+	firstLoopDone = false
+	if musicObject then
+		love.audio.stop(musicObject)
+	end
 end
 
 function map4Module.update(dt)
@@ -115,6 +126,13 @@ function map4Module.update(dt)
 end
 
 function map4Module.display()
+	--Music code (runs once)
+	if firstLoopDone == false then
+		firstLoopDone = true
+		--SoundId, Volume, Pitch, Loopable
+		musicObject = soundModule.music(map1Sound, 0.5, 1, true)
+	end
+
 	--draw background
 	background.display()
 

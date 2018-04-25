@@ -16,6 +16,11 @@ local platform4
 local leftWall
 local rightWall
 
+--For Music
+local firstLoopDone = false
+local map1Sound = 'assets/sounds/map3Music/HomestuckAggrieve.mp3'
+local musicObject = nil
+
 function map3Module.getPlatforms()
 	return {ground, platform1, platform2, platform3, platform4, leftWall, rightWall}
 end
@@ -96,6 +101,12 @@ function map3Module.unload()
 	rightWall.CanCollide = false
 	leftWall.Type = "Platform"
 	rightWall.Type = "Platform"
+
+	firstLoopDone = false
+	if musicObject then
+		love.audio.stop(musicObject)
+	end
+
 end
 
 function map3Module.update(dt)
@@ -103,6 +114,13 @@ function map3Module.update(dt)
 end
 
 function map3Module.display()
+	--Music code (runs once)
+	if firstLoopDone == false then
+		firstLoopDone = true
+		--SoundId, Volume, Pitch, Loopable
+		musicObject = soundModule.music(map1Sound, 0.5, 1, true)
+	end
+
 	--draw background
 	background.display()
 

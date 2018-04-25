@@ -6,6 +6,7 @@ local map1Module = {}
 map1 = map1Module
 
 local environmentModule = require("LuaLib.environmentModule")
+local soundModule = require("LuaLib.soundModule")
 
 local ground
 local background
@@ -15,11 +16,17 @@ local platform3
 local leftWall
 local rightWall
 
+--For Music
+local firstLoopDone = false
+local map1Sound = 'assets/sounds/map1Music/HomestuckShowtime.mp3'
+local musicObject = nil
+
 function map1Module.getPlatforms()
 	return {ground, platform1, platform2, platform3, leftWall, rightWall}
 end
 
 function map1Module.load()
+
 	--set background properties
 	background = environmentModule.FlatPlatform:new("Background", "fill", 125, 200, 232)
 	background.CanCollide = false
@@ -84,6 +91,12 @@ function map1Module.unload()
 	platform3.CanCollide = false
 	leftWall.CanCollide = false
 	rightWall.CanCollide = false
+
+	firstLoopDone = false
+	if musicObject then
+		love.audio.stop(musicObject)
+	end
+
 	leftWall.Type = "Platform"
 	rightWall.Type = "Platform"
 end
@@ -93,6 +106,13 @@ function map1Module.update(dt)
 end
 
 function map1Module.display()
+	--Music code (runs once)
+	if firstLoopDone == false then
+		firstLoopDone = true
+		--SoundId, Volume, Pitch, Loopable
+		musicObject = soundModule.music(map1Sound, 0.5, 1, true)
+	end
+
 	--draw background
 	background.display()
 

@@ -68,6 +68,15 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		Y = 0;
 	}
 
+	player.Sounds = {
+		StabSounds = {
+			'assets/sounds/player/stab/LA_Sword_Slash1.wav',
+			'assets/sounds/player/stab/LA_Sword_Slash2.wav',
+			'assets/sounds/player/stab/LA_Sword_Slash3.wav'
+		};
+		JumpSound = 'assets/sounds/player/jump/LA_Link_Jump.wav';
+	}
+
 	player.playerImages = {
 
 		playerRight = {
@@ -151,6 +160,8 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	--Main Loop
 	function player.update(dt)
 
+		local randomStabSound = math.random(1, #player.Sounds.StabSounds)
+		local randomStabPitch = (math.random(1, 5) / 10) + 0.5
 		if not player.loaded then return end
 
 		local dt1 = math.min(dt, 0.07)
@@ -182,6 +193,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 			if love.keyboard.isDown(upKey) then
 				if player.grounded then
+					soundModule.sfx(player.Sounds.JumpSound, 1, 1)
 					player.state = "jump"
 					player.Velocity.Y = player.jumpHeight
 				end
@@ -197,6 +209,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 			if love.keyboard.isDown(attackKey) and player.canAttack then
 				player.canAttack = false
 				if player.state == "crouch" or player.state == "jump" then
+					soundModule.sfx(player.Sounds.StabSounds[randomStabSound], 1, randomStabPitch)
 					player.attacking = true
 					player.charging = false
 				elseif player.state == "idle" or player.state == "walk" then
@@ -249,10 +262,12 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 				if player.charging then
 					checkTime = helpModule.Helper.variableDelayChange(0.2, player.personalTimer)
 					if checkTime then
+						soundModule.sfx(player.Sounds.StabSounds[randomStabSound], 1, randomStabPitch)
 						player.attacking = true
 						player.charging = false
 					end
 				else
+
 					if player.grounded then
 						checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
 					else
@@ -554,7 +569,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			--player.floorHitbox.display()
 			--player.hurtBox.display()
-			love.graphics.print(tostring("hi"), 100, 100 * playerIndex)
+
 			--love.graphics.setColor(255, 0, 0)
 			--love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 			if player.state == "walk" and not player.attacking and not player.charging then

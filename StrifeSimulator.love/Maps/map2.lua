@@ -15,6 +15,11 @@ local platform3
 local leftWall
 local rightWall
 
+--For Music
+local firstLoopDone = false
+local map1Sound = 'assets/sounds/map2Music/HomestuckBeatdown2.ogg'
+local musicObject = nil
+
 function map2Module.getPlatforms()
 	return {ground, platform1, platform2, platform3, leftWall, rightWall}
 end
@@ -82,6 +87,11 @@ function map2Module.unload()
 	platform1.CanCollide = false
 	platform2.CanCollide = false
 	platform3.CanCollide = false
+
+	firstLoopDone = false
+	if musicObject then
+		love.audio.stop(musicObject)
+	end
 end
 
 
@@ -90,6 +100,13 @@ function map2Module.update(dt)
 end
 
 function map2Module.display()
+	--Music code (runs once)
+	if firstLoopDone == false then
+		firstLoopDone = true
+		--SoundId, Volume, Pitch, Loopable
+		musicObject = soundModule.music(map1Sound, 0.5, 1, true)
+	end
+
 	--draw background
 	background.display()
 
