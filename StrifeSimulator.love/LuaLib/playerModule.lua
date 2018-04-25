@@ -109,7 +109,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 
 	player.friction = 3
 	player.ground = player.Position.Y     -- This makes the character land on the plaform.
-	player.baseGround = player.Position.Y
+	player.baseGround = love.graphics.getHeight()--player.Position.Y
 	player.jumpHeight = -450   
 	player.gravity = gameModule.gravity       
 
@@ -122,6 +122,10 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 	player.canAttack = true
 	player.sprinting = false
 	player.grounded = true
+
+	player.currentFloorObjectPos = nil
+	player.pastFloorObjectPos = nil
+
 	player.hitPlayers = {}
 
 	local allPlats = nil
@@ -252,7 +256,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					if player.grounded then
 						checkTime = helpModule.Helper.variableDelayChange(0.3, player.personalTimer)
 					else
-						checkTime = helpModule.Helper.variableDelayChange(0.6, player.personalTimer)
+						checkTime = helpModule.Helper.variableDelayChange(0.8, player.personalTimer)
 					end
 					if checkTime then
 						player.attacking = false
@@ -292,8 +296,16 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		--Physics
 		--X axis
 		player.Position.X = player.Position.X + player.Velocity.X * frame
+
 		if player.grounded then
 			player.Velocity.X = player.Velocity.X * (1 - math.sin(dt * player.friction, 1)) 
+
+			if player.pastFloorObjectPos then
+				if player.pastFloorObjectPos ~= player.currentFloorObjectPos then
+					player.Position.X = player.Position.X - (player.pastFloorObjectPos - player.currentFloorObjectPos)
+					--player.Position.X = player.Position.X + (player.pastFloorObjectPos - player.currentFloorObjectPos)
+				end
+			end
 		end
 
 		--Y axis
@@ -312,7 +324,16 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.Position.Y >= player.ground then
 			player.grounded = true
 		else
-			player.grounded = false                                  
+			player.grounded = false  
+			player.state = "jump"                                
+		end
+
+		if player.Position.Y == player.baseGround then
+			player.Position.X = startX
+			player.Position.Y = startY - 20
+			player.Velocity.X = 0
+
+			healthModule.damage(player, player.damage)
 		end
 
 
@@ -354,6 +375,9 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 					if check then
 						if v.CanCollide then
 							player.ground = v.Position.Y
+
+							player.pastFloorObjectPos = player.currentFloorObjectPos
+							player.currentFloorObjectPos = v.Position.X
 							break
 						else
 							player.ground = player.baseGround
@@ -530,7 +554,7 @@ function plyModuleName.Player:new(name, upKey, downKey, leftKey, rightKey, attac
 		if player.loaded then
 			--player.floorHitbox.display()
 			--player.hurtBox.display()
-
+			love.graphics.print(tostring("hi"), 100, 100 * playerIndex)
 			--love.graphics.setColor(255, 0, 0)
 			--love.graphics.rectangle("fill", player.Position.X, player.Position.Y, 2, 2)
 			if player.state == "walk" and not player.attacking and not player.charging then

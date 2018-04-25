@@ -16,11 +16,23 @@ local platform4
 local leftWall
 local rightWall
 
+local picounter = 0
+
 function map4Module.getPlatforms()
 	return {ground, platform1, platform2, platform3, platform4, leftWall, rightWall}
 end
 
+--Andrew, because you spam .load() for all of your maps, we don't really need a map.update()
+--So, I treated this area like an update loop.
+--I added sinewaves on the platforms also.
+--From Kyle
 function map4Module.load()
+
+	picounter = picounter + math.pi/100
+	if picounter >= math.pi * 2 then	--So we dont overflow data
+		picounter = 0
+	end
+
 	--set background properties
 	background = environmentModule.FlatPlatform:new("Background", "fill", 115, 50, 115)
 	background.CanCollide = false
@@ -42,7 +54,7 @@ function map4Module.load()
 	platform1.CanCollide = true
 	platform1.Size.X = 200
 	platform1.Size.Y = 15
-	platform1.Position.X = 300
+	platform1.Position.X = 300 + 200 * math.sin(picounter)
 	platform1.Position.Y = 365
 
 	--set platform2 properties
@@ -50,7 +62,7 @@ function map4Module.load()
 	platform2.CanCollide = true
 	platform2.Size.X = 200
 	platform2.Size.Y = 15
-	platform2.Position.X = 300
+	platform2.Position.X = 300 - 200 * math.sin(picounter)
 	platform2.Position.Y = 280
 
 	--set platform3 properties
@@ -58,7 +70,7 @@ function map4Module.load()
 	platform3.CanCollide = true
 	platform3.Size.X = 200
 	platform3.Size.Y = 15
-	platform3.Position.X = 300
+	platform3.Position.X = 300 + 200 * math.sin(picounter)
 	platform3.Position.Y = 195
 
 	--set platform4 properties
@@ -66,7 +78,7 @@ function map4Module.load()
 	platform4.CanCollide = true
 	platform4.Size.X = 200
 	platform4.Size.Y = 15
-	platform4.Position.X = 300
+	platform4.Position.X = 300 - 200 * math.sin(picounter)
 	platform4.Position.Y = 110
 
 	leftWall = environmentModule.FlatPlatform:new("Left Wall", "fill", 255, 255, 255)
@@ -99,7 +111,7 @@ function map4Module.unload()
 end
 
 function map4Module.update(dt)
-	
+
 end
 
 function map4Module.display()
