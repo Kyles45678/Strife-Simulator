@@ -160,52 +160,52 @@ function gameModule.update(dt)
 
 	--control which screen is being displayed
 
-	if screen == 1 then
+	if screen == constantsModule.titleScreen then
 		--click on "instructions" to go to instructions
 		if gameModule.clicked(InstructionsRect) then
-			screen = 2
+			screen = constantsModule.instructions
 		--click on "play game" to go to map selection
 		elseif gameModule.clicked(MapSelectRect) then
-			screen = 3
+			screen = constantsModule.mapSelection
 		end
 	end
 
 	--click on "back" to go back to title screen
-	if (screen == 2 or screen == 3) and gameModule.clicked(BackRect) then
-		screen = 1
+	if (screen == constantsModule.instructions or screen == constantsModule.mapSelection) and gameModule.clicked(BackRect) then
+		screen = constantsModule.titleScreen
 	end
 
-	if screen == 3 then
+	if screen == constantsModule.mapSelection then
 		--click on map 1 icon to go to map 1
 		if gameModule.clicked(Map1Rect) then
-			screen = 4
+			screen = constantsModule.map1
 		--click on map 2 icon to go to map 2
 		elseif gameModule.clicked(Map2Rect) then
-			screen = 5
+			screen = constantsModule.map2 
 		--click on map 3 icon to go to map 3
 		elseif gameModule.clicked(Map3Rect) then
-			screen = 6
+			screen = constantsModule.map3 
 		--click on map 4 icon to go to map 4
 		elseif gameModule.clicked(Map4Rect) then
-			screen = 7
+			screen = constantsModule.map4 
 		end
 	end
 
 	--go to results screen if game ends
 	if healthModule.gameOver then
 		--love.timer.sleep(0.5)
-		screen = 8
+		screen = constantsModule.resultsScreen
 		healthModule.gameOver = false
 	end
 
 	--click on "next" to go to results screen
-	if screen == 8 and gameModule.clicked(NextRect) then
-		screen = 9
+	if screen == constantsModule.resultsScreen and gameModule.clicked(NextRect) then
+		screen = constantsModule.gameOver
 	end
 
-	if screen == 9 then
+	if screen == constantsModule.gameOver then
 		if gameModule.clicked(TitleRect) then
-			screen = 1
+			screen = constantsModule.titleScreen
 		elseif gameModule.clicked(QuitRect) then
 			love.event.quit()
 		end
@@ -213,18 +213,18 @@ function gameModule.update(dt)
 
 	--for testing, delete later
 	if love.keyboard.isDown('kp9') then
-		screen = 1
+		screen = constantsModule.titleScreen
 	end
 
 	if love.keyboard.isDown('kp8') then
-		screen = 8
+		screen = constantsModule.resultsScreen
 	end
 
 	--We have the meats
-	if screen == 1 and love.keyboard.isDown('9') and love.keyboard.isDown('3') and love.keyboard.isDown('0') then
-		screen = 10
-	elseif screen == 10 and love.keyboard.isDown('backspace') then
-		screen = 1
+	if screen == constantsModule.titleScreen and love.keyboard.isDown('9') and love.keyboard.isDown('3') and love.keyboard.isDown('0') then
+		screen = constantsModule.bryGuy
+	elseif screen == constantsModule.bryGuy and love.keyboard.isDown('backspace') then
+		screen = constantsModule.titleScreen
 	end
 end
 
@@ -294,7 +294,7 @@ function gameModule.display()
 	end
 
 	--draw cursor to screen in the menus
-	if screen == 1 or screen == 2 or screen == 3 or screen == 8 or screen == 9 then
+	if screen == constantsModule.titleScreen or screen == constantsModule.instructions or screen == constantsModule.mapSelection or screen == constantsModule.resultsScreen or screen == constantsModule.gameOver then
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(cursor, love.mouse.getX() - cursor:getWidth() / 2, love.mouse.getY() - cursor:getHeight() / 2)
 	end
